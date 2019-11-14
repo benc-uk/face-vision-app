@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Face API App</title>
+  <link rel="shortcut icon" href="img/icon.png" type="image/png">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+ 
+  <link rel="stylesheet" href="css/main.css">
+
+  <script src="config.js"></script>
+</head>
+
+<body>
+  <div class="center">
+    <img id="photo" class="hidden"> 
+    <canvas id="photoCanvas" class="hidden"></canvas>
+  </div>
+  
+  <div class="center" id="photobutton">
+    <input type="file" name="file" id="file" class="inputfile" accept="image/*" capture/>
+    <label for="file">&#x1F4F7; Take A Photo!</label>
+  </div>
+
+  <div class="center" id="output">
+  </div>
+
+  <div class="center hidden" id="spinner">
+    <img src="img/spinner.gif">
+  </div>  
+
+  <!-- All code is here -->
+  <script src="js/colors.js"></script>
+  <script src="js/main.js"></script>
+
+</body>
+</html>
