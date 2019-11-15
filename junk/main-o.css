@@ -7,51 +7,38 @@ body, html {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-button {
-  font-size: 2.5em; 
+.inputfile {
+  width: 0.1px; height: 0.1px;
+  opacity: 0; overflow: hidden; position: absolute;
+  z-index: -1;
+}
+.inputfile + label {
+  font-size: 2em; 
+  cursor: pointer; 
+  font-weight: 700;
   color: #999; 
-  background-color: rgb(37, 37, 37);
-  padding: 5px;
-  border: 3px solid rgb(27, 27, 27);
-  cursor: pointer;
+  background-color: #111;
+  display: inline-block;
+  padding: 15px;
+  border: 3px solid #777;
+}
+.inputfile:focus + label,
+.inputfile + label:hover {
+  background-color: #222; color: #bbb
 }
 
-video {
-  width: 100%
-}
-
-#camselect {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  z-index: 200;
-}
-
-#accept {
-  font-size: 3.5em; 
-  position: absolute;
-  bottom: 10px;
-  left: 20%;
-  z-index: 200;
-}
-
-#cancel {
-  font-size: 3.5em;
-  position: absolute;
-  bottom: 10px;
-  right: 20%;
-  z-index: 200;
-}
-
-#restart {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  z-index: 200;
+#photo {
+  /* max-height: 60vh;
+  max-width: 100%; */
+  border: 3px solid rgb(20, 16, 16);
 }
 
 #output {
   color: rgb(218, 218, 218);
+}
+
+#spinner img {
+  max-height: 20vh;
 }
 
 .center { 
