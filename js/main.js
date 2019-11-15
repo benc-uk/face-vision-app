@@ -1,27 +1,8 @@
 
 const video = document.querySelector('video');
 const canvas = document.querySelector('canvas');
-var ctx;
 var selectedDevice = 0;
 var deviceIds = [];
-
-window.addEventListener("orientationchange", function() {
-  checkOrientation();
-});
-
-function checkOrientation() {
-  if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
-    if(screen.orientation.type.toLowerCase().includes('landscape')) {
-      document.querySelector('#top').style.display = "none";
-      document.querySelector('#main').style.height = "100%";
-    } else {
-      document.querySelector('#top').style.display = "block";
-      document.querySelector('#main').style.height = null;
-    }
-  }
-}
-
-checkOrientation();
 
 // Start by finding all media devices
 navigator.mediaDevices.enumerateDevices()
@@ -54,7 +35,6 @@ function openCamera() {
   })
   .catch(err => showError(err));
 }
-
 
 //
 //
@@ -94,8 +74,7 @@ video.onclick = function() {
   canvas.width = vidDim.width;
   canvas.height = vidDim.height;
 
-  ctx = canvas.getContext('2d');
-  ctx.drawImage(video, 0, 0, vidDim.width, vidDim.height);
+  canvas.getContext('2d').drawImage(video, 0, 0, vidDim.width, vidDim.height);
 
   video.style.display = "none";
   canvas.style.display = "inline";
@@ -113,7 +92,10 @@ video.onclick = function() {
 function acceptPhoto() {
   // Set agreement cookie
   document.cookie = "agreement=true; expires=Fri, 31 Dec 9999 23:59:59 GMT";
+
+  // Calls function in results.js
   canvas.toBlob(analyzePhotoBlob);
+  
   document.querySelector('#dialog').style.display = "none";
   document.querySelector('#accept').style.display = "none";
   document.querySelector('#cancel').style.display = "none";
@@ -122,8 +104,6 @@ function acceptPhoto() {
   document.querySelector('#output').style.display = "block";
   document.querySelector('#output').innerHTML = "";
 }
-
-
 
 //
 //
@@ -152,6 +132,24 @@ function showAgreement() {
     document.querySelector('#dialog').innerHTML = `Pressing the tick ✅ button will upload this image to the cloud and use Azure Cognitive Services to analyse the contents.<br><a href="https://azure.microsoft.com/en-gb/support/legal/cognitive-services-terms/">In doing so you agree to these terms</a>`
   }
 }
+
+
+//
+//
+//
+function checkOrientation() {
+  if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+    if(screen.orientation.type.toLowerCase().includes('landscape')) {
+      document.querySelector('#top').style.display = "none";
+      document.querySelector('#main').style.height = "100%";
+    } else {
+      document.querySelector('#top').style.display = "block";
+      document.querySelector('#main').style.height = null;
+    }
+  }
+}
+window.addEventListener("orientationchange", checkOrientation);
+
 
 //
 // Helper util gets real video element height

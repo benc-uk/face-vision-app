@@ -74,16 +74,18 @@ function processFace(face) {
   </table>`;
 
   // Face boxes
-  ctx.strokeStyle = color;
-  ctx.fillStyle = color;
-  ctx.shadowColor = "#000000"
-  ctx.shadowOffsetX = 4 * scaleFactor;
-  ctx.shadowOffsetY = 4 * scaleFactor;
-  ctx.lineWidth = 10 * scaleFactor;
-  ctx.beginPath();
-  ctx.rect(face.faceRectangle.left, face.faceRectangle.top, face.faceRectangle.width, face.faceRectangle.height);
-  ctx.stroke();
-  ctx.font = `${60 * scaleFactor}px Arial`;
+  let canvasCtx = document.querySelector('canvas').getContext('2d');
+
+  canvasCtx.strokeStyle = color;
+  canvasCtx.fillStyle = color;
+  canvasCtx.shadowColor = "#000000"
+  canvasCtx.shadowOffsetX = 4 * scaleFactor;
+  canvasCtx.shadowOffsetY = 4 * scaleFactor;
+  canvasCtx.lineWidth = 10 * scaleFactor;
+  canvasCtx.beginPath();
+  canvasCtx.rect(face.faceRectangle.left, face.faceRectangle.top, face.faceRectangle.width, face.faceRectangle.height);
+  canvasCtx.stroke();
+  canvasCtx.font = `${60 * scaleFactor}px Arial`;
   let offset = 15 * scaleFactor;
-  ctx.fillText(`${faceAttr.gender} (${faceAttr.age})`, face.faceRectangle.left, face.faceRectangle.top - offset);
+  canvasCtx.fillText(`${faceAttr.gender} (${faceAttr.age})`, face.faceRectangle.left, face.faceRectangle.top - offset);
 }
