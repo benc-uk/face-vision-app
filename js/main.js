@@ -5,8 +5,11 @@ var ctx;
 var selectedDevice = 0;
 var deviceIds = [];
 
-
 window.addEventListener("orientationchange", function() {
+  checkOrientation();
+});
+
+function checkOrientation() {
   if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
     if(screen.orientation.type.toLowerCase().includes('landscape')) {
       document.querySelector('#top').style.display = "none";
@@ -16,7 +19,9 @@ window.addEventListener("orientationchange", function() {
       document.querySelector('#main').style.height = null;
     }
   }
-});
+}
+
+checkOrientation();
 
 // Start by finding all media devices
 navigator.mediaDevices.enumerateDevices()
