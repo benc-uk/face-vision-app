@@ -21,7 +21,7 @@ function analyzePhotoVision(blob) {
     .then(data => {
       console.dir(data);
 
-      output.innerHTML = '<table id="outtable"></table>';
+      output.innerHTML = '<br><table id="outtable"></table>';
       let table = document.querySelector('#outtable');
 
       if(data.faces) {
@@ -100,12 +100,12 @@ function visionItemBox(left, top, width, height, label) {
   canvasCtx.shadowColor = "#000000"
   canvasCtx.shadowOffsetX = 4 * scaleFactor;
   canvasCtx.shadowOffsetY = 4 * scaleFactor;
-  canvasCtx.lineWidth = 10 * scaleFactor;
+  canvasCtx.lineWidth = 6 * scaleFactor;
   canvasCtx.beginPath();
   canvasCtx.rect(left, top, width, height);
   canvasCtx.stroke();
-  canvasCtx.font = `${60 * scaleFactor}px Arial`;
-  let offset = 15 * scaleFactor;
+  canvasCtx.font = `${40 * scaleFactor}px Arial`;
+  let offset = 10 * scaleFactor;
   let labelY = top - offset
   if(top < 30) {
     labelY = top + height + (offset * 3)

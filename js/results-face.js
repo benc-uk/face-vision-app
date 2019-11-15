@@ -81,11 +81,11 @@ function processFaceResult(face) {
   canvasCtx.shadowColor = "#000000"
   canvasCtx.shadowOffsetX = 4 * scaleFactor;
   canvasCtx.shadowOffsetY = 4 * scaleFactor;
-  canvasCtx.lineWidth = 10 * scaleFactor;
+  canvasCtx.lineWidth = 6 * scaleFactor;
   canvasCtx.beginPath();
   canvasCtx.rect(face.faceRectangle.left, face.faceRectangle.top, face.faceRectangle.width, face.faceRectangle.height);
   canvasCtx.stroke();
-  canvasCtx.font = `${60 * scaleFactor}px Arial`;
-  let offset = 15 * scaleFactor;
+  canvasCtx.font = `${40 * scaleFactor}px Arial`;
+  let offset = 10 * scaleFactor;
   canvasCtx.fillText(`${faceAttr.gender} (${faceAttr.age})`, face.faceRectangle.left, face.faceRectangle.top - offset);
 }

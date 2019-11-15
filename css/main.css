@@ -129,7 +129,7 @@ table {
   text-align: left;
   border-collapse: collapse;
   display: inline;
-  padding: 10px;
+  padding-right: 5px;
 }
 
 table td {
