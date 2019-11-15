@@ -1,56 +1,89 @@
+
 const video = document.querySelector('video');
 const canvas = document.querySelector('canvas');
 var ctx;
 var selectedDevice = 0;
 var deviceIds = [];
 
-navigator.mediaDevices.enumerateDevices()
-.then(gotDevices)
-.then(openCamera)
-.catch(handleError);
 
-function gotDevices(deviceList) {
+window.addEventListener("orientationchange", function() {
+  if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+    if(screen.orientation.type.toLowerCase().includes('landscape')) {
+      document.querySelector('#top').style.display = "none";
+      document.querySelector('#main').style.height = "100%";
+    } else {
+      document.querySelector('#top').style.display = "block";
+      document.querySelector('#main').style.height = null;
+    }
+  }
+});
+
+// Start by finding all media devices
+navigator.mediaDevices.enumerateDevices()
+.then(deviceList => {
+  
   for (let deviceInfo of deviceList) {
-    if (deviceInfo.kind === 'videoinput') {      
+    if (deviceInfo.kind === 'videoinput') {   
+      // For debugging
+      console.log(deviceInfo);  
       // Skip infrared camera
       if(deviceInfo.label && deviceInfo.label.toLowerCase().includes(" ir ")) continue;
       deviceIds.push(deviceInfo.deviceId);
     }
   }
-}
+})
+.then(openCamera)
+.catch(err => showError(err));
 
+//
+//
+//
 function openCamera() {
   const constraints = {
     video: { deviceId: {exact: deviceIds[selectedDevice]} }
   };
-
   navigator.mediaDevices.getUserMedia(constraints)
-  .then(streamOpen)
-  .catch(handleError);
+  .then(stream => {
+    window.stream = stream
+    video.srcObject = stream
+  })
+  .catch(err => showError(err));
 }
 
+
+//
+//
+//
 function switchCameras() {
   selectedDevice = ++selectedDevice % deviceIds.length; 
   openCamera();
 }
 
-function streamOpen(stream) {
-  window.stream = stream; 
-  video.srcObject = stream;
-}
-
-function handleError(error) {
-  console.error('Error: ', error);
-}
-
+//
+//
+//
 function cancelPhoto() {
   video.style.display = "inline";
   canvas.style.display = "none";
   document.querySelector('#accept').style.display = "none";
   document.querySelector('#cancel').style.display = "none";
   document.querySelector('#camselect').style.display = "block";
+  document.querySelector('#dialog').style.display = "none";
 }
 
+//
+//
+//
+function restart() {
+  document.querySelector('#dialog').style.display = "none";
+  document.querySelector('#restart').style.display = "none";
+  document.querySelector('#output').style.display = "none";
+  cancelPhoto()
+}
+
+//
+//
+//
 video.onclick = function() {
   let vidDim = videoDimensions(video);
   canvas.width = vidDim.width;
@@ -65,87 +98,54 @@ video.onclick = function() {
   document.querySelector('#accept').style.display = "block";
   document.querySelector('#cancel').style.display = "block";
   document.querySelector('#camselect').style.display = "none";
+  
+  showAgreement();
 };
 
+//
+//
+//
 function acceptPhoto() {
-  canvas.toBlob(sendPhoto);
+  // Set agreement cookie
+  document.cookie = "agreement=true; expires=Fri, 31 Dec 9999 23:59:59 GMT";
+  canvas.toBlob(analyzePhotoBlob);
+  document.querySelector('#dialog').style.display = "none";
   document.querySelector('#accept').style.display = "none";
   document.querySelector('#cancel').style.display = "none";
   document.querySelector('#camselect').style.display = "none";
   document.querySelector('#restart').style.display = "block";
+  document.querySelector('#output').style.display = "block";
+  document.querySelector('#output').innerHTML = "";
 }
 
-function sendPhoto(blob) {
-  fetch(API_ENDPOINT, {
-      method: 'POST',
-      headers: {
-        'Ocp-Apim-Subscription-Key': API_KEY,
-        'Content-Type': 'application/octet-stream'
-      },
-      body: blob
-    })
-    .then(response => {
-      if(!response.ok) {
-        throw Error(response.statusText);
-      }
-      return response.json();
-    })
-    .then(data => {
 
-      let faceNum = 0;
-      for(let face of data) {
-        processFace(face, ++faceNum)
-      }
 
-    })
-    .catch(err => {
-      console.log(err);
-    })
+//
+//
+//
+function showError(err) {
+  document.querySelector('#dialog').style.display = "block";
+  document.querySelector('#dialog').innerHTML = `<span class="error">A bad thing happened 😥 <br> ${err.toString()}</span>`
 }
 
-function processFace(face, faceNum) {
-  let color = randomColor({luminosity: 'light'});
-  let scaleFactor = Math.max(canvas.width / 2000, 0.5);
 
-  let hairColor = "Unknown";
-  let hairColorConfidence = 0;
-  for(let hair of face.faceAttributes.hair.hairColor) {
-    if(hair.confidence > hairColorConfidence) {
-      hairColorConfidence = hair.confidence;
-      hairColor = hair.color
-    }
+//
+//
+//
+function showHelp() {
+  document.querySelector('#dialog').style.display = "block";
+  document.querySelector('#dialog').innerHTML = `Face API Demo App v0.2.0<br>(C) Ben Coleman 2019<br><a href="https://github.com/benc-uk/face-api-app">github.com/benc-uk/face-api-app</a> `
+}
+
+//
+//
+//
+function showAgreement() {
+  // Only show if agreement cookie set true
+  if (document.cookie.replace(/(?:(?:^|.*;\s*)agreement\s*\=\s*([^;]*).*$)|^.*$/, "$1") !== "true") {
+    document.querySelector('#dialog').style.display = "block";
+    document.querySelector('#dialog').innerHTML = `Pressing the tick ✅ button will upload this image to the cloud and use Azure Cognitive Services to analyse the contents.<br><a href="https://azure.microsoft.com/en-gb/support/legal/cognitive-services-terms/">In doing so you agree to these terms</a>`
   }
-
-  // Process results
-  let faceAttr = face.faceAttributes;
-  document.querySelector('#output').innerHTML += `
-  <h2 style="color:${color}">Face ${faceNum}</h2>
-  <table class="center" cellspacing="0" cellpadding="0" style="color:${color}">
-    <tr><td>Gender: ${faceAttr.gender}</td><td>Age: ${faceAttr.age}</td></tr>
-    <tr><td>Smile: ${parseFloat(faceAttr.smile * 100).toFixed(1)+"%"}</td><td>Glasses: ${faceAttr.glasses}</td></tr>
-    <tr><td>Hair: ${hairColor}</td><td>Bald: ${parseFloat(face.faceAttributes.hair.bald * 100).toFixed(1)+"%"}</td></tr>
-    <tr><td>Beard: ${parseFloat(faceAttr.facialHair.beard * 100).toFixed(1)+"%"}</td><td>Moustache: ${parseFloat(faceAttr.facialHair.moustache * 100).toFixed(1)+"%"}</td></tr>
-    <tr><td>Eye Makeup: ${faceAttr.makeup.eyeMakeup}</td><td>Lip Makeup: ${faceAttr.makeup.lipMakeup}</td></tr>
-    <tr><td>Anger: ${parseFloat(faceAttr.emotion.anger * 100).toFixed(1)+"%"}</td><td>Contempt: ${parseFloat(faceAttr.emotion.contempt * 100).toFixed(1)+"%"}</td></tr>
-    <tr><td>Disgust: ${parseFloat(faceAttr.emotion.disgust * 100).toFixed(1)+"%"}</td><td>Fear: ${parseFloat(faceAttr.emotion.fear * 100).toFixed(1)+"%"}</td></tr>
-    <tr><td>Happiness: ${parseFloat(faceAttr.emotion.happiness * 100).toFixed(1)+"%"}</td><td>Neutral: ${parseFloat(faceAttr.emotion.neutral * 100).toFixed(1)+"%"}</td></tr>
-    <tr><td>Sadness: ${parseFloat(faceAttr.emotion.sadness * 100).toFixed(1)+"%"}</td><td>Surprise: ${parseFloat(faceAttr.emotion.surprise * 100).toFixed(1)+"%"}</td></tr>
-  </table>
-  `;
-
-  // Face boxes
-  ctx.strokeStyle = color;
-  ctx.fillStyle = color;
-  ctx.shadowColor = "#000000"
-  ctx.shadowOffsetX = 4 * scaleFactor;
-  ctx.shadowOffsetY = 4 * scaleFactor;
-  ctx.lineWidth = 10 * scaleFactor;
-  ctx.beginPath();
-  ctx.rect(face.faceRectangle.left, face.faceRectangle.top, face.faceRectangle.width, face.faceRectangle.height);
-  ctx.stroke();
-  ctx.font = (60 * scaleFactor)+"px Arial";
-  let offset = 15 * scaleFactor;
-  ctx.fillText(`${faceAttr.gender} (${faceAttr.age})`, face.faceRectangle.left, face.faceRectangle.top - offset);
 }
 
 //

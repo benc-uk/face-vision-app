@@ -1,52 +1,84 @@
 body, html { 
-  background-color: rgb(51, 45, 45); 
+  background-color: rgb(34, 31, 31); 
   height: 100%; 
-  max-height: 100%;
   padding: 0; 
   margin: 0; 
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #bbb;
+}
+
+@media (orientation: landscape) {
+  #top {
+    display: none;
+  }
 }
 
 button {
+  box-shadow: 0px 5px 10px 5px rgba(0,0,0,0.6);
   font-size: 2.5em; 
-  color: #999; 
+  color: rgb(194, 194, 194); 
   background-color: rgb(37, 37, 37);
   padding: 5px;
   border: 3px solid rgb(27, 27, 27);
   cursor: pointer;
+  border-radius: 10%;
 }
 
 video {
-  width: 100%
+  position: relative;
+  width: 100%;
+  max-height: 100%;
+  margin: 0;
+  padding: 0;
+  border-radius: 5%;
+  border: 3px solid #111;
+}
+
+canvas {
+  margin: 0;
+  padding: 0;
+  border-radius: 5%;
+  border: 3px solid #111;
+}
+
+#main {
+  position: relative;
+  padding: 0;
+  margin: 0;
+  width: 90%; 
+  max-height: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
 }
 
 #camselect {
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: 20px;
+  right: 20px;
   z-index: 200;
 }
 
 #accept {
   font-size: 3.5em; 
   position: absolute;
-  bottom: 10px;
+  bottom: 30px;
   left: 20%;
-  z-index: 200;
+  z-index: 20000;
 }
 
 #cancel {
   font-size: 3.5em;
   position: absolute;
-  bottom: 10px;
+  bottom: 30px;
   right: 20%;
-  z-index: 200;
+  z-index: 20000;
 }
 
 #restart {
   position: absolute;
-  top: 10px;
-  left: 10px;
+  top: 20px;
+  left: 20px;
   z-index: 200;
 }
 
@@ -64,14 +96,48 @@ video {
   display: none;
 }
 
-table.center {
+#dialog {
+  box-shadow: 0px 5px 10px 5px rgba(0,0,0,0.6);
+  font-size: 150%;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 20px;
+  width: 50%;
+  padding: 10px;
+  text-align: center;
+  margin: 0 auto;
+  z-index: 200; 
+  background-color: rgb(37, 37, 37);
+  border: 3px solid rgb(27, 27, 27); 
+  cursor: pointer;
+}
+
+#dialog a {
+  font-size: 70%;
+  color: aqua;
+}
+
+table {
   margin-left:auto; 
   margin-right:auto;
   text-align: left;
   border-collapse: collapse;
+  display: inline;
+  padding: 10px;
 }
 
-table.center td {
+table td {
   padding: 1vh;
-  border: 3px solid rgba(0, 0, 0, 0.4)
+  border: 3px solid rgba(0, 0, 0, 0.4);
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+#helpicon {
+  position: absolute; 
+  top: 10px; 
+  right: 20px; 
+  font-size: 200%;
+  cursor: pointer;
+  background-color: rgba(0, 0, 0, 0.2);
 }

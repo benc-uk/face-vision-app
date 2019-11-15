@@ -14,13 +14,22 @@
 </head>
 
 <body>
-  <button id="camselect" onclick="switchCameras()">&#x1F4F7;</button>
-  <button id="restart" class="hidden" onclick="document.location.reload()">&#x1f504;</button>
-  <button id="accept" class="hidden" onclick="acceptPhoto()">&#x2705;</button>
-  <button id="cancel" class="hidden" onclick="cancelPhoto()">&#x274c;</button>
+  <div id="top">
+    <h2 class="center">👨 Face API Demo App</h2>
+    <div onclick="showHelp()" id="helpicon">&nbsp; ? &nbsp;</div>
+  </div>
 
-  <video autoplay></video>
-  <canvas></canvas>
+  <div class="center" id="main">
+    <button id="camselect" onclick="switchCameras()">&#x1F4F7;</button>
+    <button id="restart" class="hidden" onclick="restart()">&#x1f504;</button>
+    <button id="accept" class="hidden" onclick="acceptPhoto()">&#x2705;</button>
+    <button id="cancel" class="hidden" onclick="cancelPhoto()">&#x274c;</button>    
+
+    <video autoplay></video>
+    <canvas class="hidden"></canvas>
+
+    <div id="dialog" class="hidden" onclick="document.querySelector('#dialog').style.display = `none`"></div>
+  </div>
 
   <div class="center" id="output">
   </div>
@@ -31,5 +40,6 @@
 
   <script src="js/colors.js"></script>
   <script src="js/main.js"></script>
+  <script src="js/results.js"></script>
 </body>
 </html>
