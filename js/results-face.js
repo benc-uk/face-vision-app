@@ -1,12 +1,12 @@
 //
 //
 //
-function analyzePhotoBlob(blob) {
-  let apiUrl = `https://${API_ENDPOINT}/face/v1.0/detect?returnFaceAttributes=age,gender,smile,facialHair,glasses,emotion,hair,makeup`
+function analyzePhotoFaceDetect(blob) {
+  let apiUrl = `https://${FACE_API_ENDPOINT}/face/v1.0/detect?returnFaceAttributes=age,gender,smile,facialHair,glasses,emotion,hair,makeup`
   fetch(apiUrl, {
       method: 'POST',
       headers: {
-        'Ocp-Apim-Subscription-Key': API_KEY,
+        'Ocp-Apim-Subscription-Key': FACE_API_KEY,
         'Content-Type': 'application/octet-stream'
       },
       body: blob
@@ -23,7 +23,7 @@ function analyzePhotoBlob(blob) {
         throw Error("No faces detected");
 
       for(let face of data) {
-        processFace(face)
+        processFaceResult(face)
       }
     })
     .catch(err => {
@@ -34,7 +34,7 @@ function analyzePhotoBlob(blob) {
 //
 //
 //
-function processFace(face) {
+function processFaceResult(face) {
   let color = randomColor({ luminosity: 'light' });
   let scaleFactor = Math.max(canvas.width / 2000, 0.5);
 
@@ -51,7 +51,7 @@ function processFace(face) {
   let faceAttr = face.faceAttributes;
   document.querySelector('#output').innerHTML += `
   <h2 style="color:${color}">${faceAttr.gender} ${faceAttr.age}</h2>
-  <table style="color:${color}"></tr>
+  <table style="color:${color}">
     <tr><td>Smile:</td><td>${parseFloat(faceAttr.smile * 100).toFixed(1)+"%"}</td></tr>
     <tr><td>Glasses:</td><td>${faceAttr.glasses}</td></tr>
     <tr><td>Hair:</td><td>${hairColor}</td></tr>
@@ -62,7 +62,7 @@ function processFace(face) {
     <tr><td>Lip Makeup:</td><td>${faceAttr.makeup.lipMakeup}</td></tr>
   </table>
 
-  <table style="color:${color}"></tr>
+  <table style="color:${color}">
     <tr><td>Neutral:</td><td>${parseFloat(faceAttr.emotion.neutral * 100).toFixed(1)+"%"}</td></tr>
     <tr><td>Happiness:</td><td>${parseFloat(faceAttr.emotion.happiness * 100).toFixed(1)+"%"}</td></tr>
     <tr><td>Sadness:</td><td>${parseFloat(faceAttr.emotion.sadness * 100).toFixed(1)+"%"}</td></tr>

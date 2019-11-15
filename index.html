@@ -6,7 +6,7 @@
   <link rel="shortcut icon" href="img/icon.png" type="image/png">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Face API App</title>
+  <title>Azure Cognitive Demo</title>
 
   <link rel="stylesheet" href="css/main.css">
 
@@ -15,15 +15,16 @@
 
 <body>
   <div id="top">
-    <h2 class="center">👨 Face API Demo App</h2>
+    <h2 class="center">👨 Azure Cognitive APIs Demo 🏡</h2>
     <div onclick="showHelp()" id="helpicon">&nbsp; ? &nbsp;</div>
   </div>
 
   <div class="center" id="main">
     <button id="camselect" onclick="switchCameras()">&#x1F4F7;</button>
-    <button id="restart" class="hidden" onclick="restart()">&#x1f504;</button>
+    <button id="modeselect" onclick="switchMode()">&#x1f9d1;</button>
     <button id="accept" class="hidden" onclick="acceptPhoto()">&#x2705;</button>
     <button id="cancel" class="hidden" onclick="cancelPhoto()">&#x274c;</button>    
+    <button id="restart" class="hidden" onclick="restart()">&#x1f504;</button>
 
     <video autoplay></video>
     <canvas class="hidden"></canvas>
@@ -36,7 +37,8 @@
 
   <script src="js/colors.js"></script>
   <script src="js/main.js"></script>
-  <script src="js/results.js"></script>
+  <script src="js/results-face.js"></script>
+  <script src="js/results-vision.js"></script>
   <script>
     checkOrientation()
   </script>

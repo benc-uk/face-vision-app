@@ -7,15 +7,9 @@ body, html {
   color: #bbb;
 }
 
-@media (orientation: landscape) {
-  #top {
-    display: none;
-  }
-}
-
 button {
   box-shadow: 0px 5px 10px 5px rgba(0,0,0,0.6);
-  font-size: 2.5em; 
+  font-size: 2rem; 
   color: rgb(194, 194, 194); 
   background-color: rgb(37, 37, 37);
   padding: 5px;
@@ -57,10 +51,19 @@ canvas {
   top: 20px;
   right: 20px;
   z-index: 200;
+  width: 70px;
+}
+
+#modeselect {
+  position: absolute;
+  top: 100px;
+  right: 20px;
+  z-index: 200;
+  width: 70px;
 }
 
 #accept {
-  font-size: 3.5em; 
+  font-size: 3rem; 
   position: absolute;
   bottom: 30px;
   left: 20%;
@@ -68,7 +71,7 @@ canvas {
 }
 
 #cancel {
-  font-size: 3.5em;
+  font-size: 3rem;
   position: absolute;
   bottom: 30px;
   right: 20%;
@@ -84,6 +87,8 @@ canvas {
 
 #output {
   color: rgb(218, 218, 218);
+  display: inline-block;
+  z-index: 500;
 }
 
 .center { 
@@ -98,7 +103,7 @@ canvas {
 
 #dialog {
   box-shadow: 0px 5px 10px 5px rgba(0,0,0,0.6);
-  font-size: 150%;
+  font-size: 130%;
   position: absolute;
   left: 0;
   right: 0;
@@ -128,7 +133,7 @@ table {
 }
 
 table td {
-  padding: 1vh;
+  padding: 0.5rem;
   border: 3px solid rgba(0, 0, 0, 0.4);
   background-color: rgba(0, 0, 0, 0.3);
 }

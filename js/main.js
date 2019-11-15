@@ -4,6 +4,8 @@ const canvas = document.querySelector('canvas');
 var selectedDevice = 0;
 var deviceIds = [];
 
+var mode = "face"
+
 // Start by finding all media devices
 navigator.mediaDevices.enumerateDevices()
 .then(deviceList => {
@@ -17,6 +19,7 @@ navigator.mediaDevices.enumerateDevices()
       deviceIds.push(deviceInfo.deviceId);
     }
   }
+  selectedDevice = 2
 })
 .then(openCamera)
 .catch(err => showError(err));
@@ -33,7 +36,7 @@ function openCamera() {
     window.stream = stream
     video.srcObject = stream
   })
-  .catch(err => showError(err));
+  .catch(err => showError(err.toString() + "<br>Make sure you accept camera permissions<br><a href='javascript:location.reload()'>Try reloading page</a>"));
 }
 
 //
@@ -53,6 +56,7 @@ function cancelPhoto() {
   document.querySelector('#accept').style.display = "none";
   document.querySelector('#cancel').style.display = "none";
   document.querySelector('#camselect').style.display = "block";
+  document.querySelector('#modeselect').style.display = "block";
   document.querySelector('#dialog').style.display = "none";
 }
 
@@ -60,7 +64,6 @@ function cancelPhoto() {
 //
 //
 function restart() {
-  document.querySelector('#dialog').style.display = "none";
   document.querySelector('#restart').style.display = "none";
   document.querySelector('#output').style.display = "none";
   cancelPhoto()
@@ -82,6 +85,7 @@ video.onclick = function() {
   document.querySelector('#accept').style.display = "block";
   document.querySelector('#cancel').style.display = "block";
   document.querySelector('#camselect').style.display = "none";
+  document.querySelector('#modeselect').style.display = "none";
   
   showAgreement();
 };
@@ -94,12 +98,16 @@ function acceptPhoto() {
   document.cookie = "agreement=true; expires=Fri, 31 Dec 9999 23:59:59 GMT";
 
   // Calls function in results.js
-  canvas.toBlob(analyzePhotoBlob);
+  if(mode == "vision")
+    canvas.toBlob(analyzePhotoVision, "image/jpeg");
+  else
+    canvas.toBlob(analyzePhotoFaceDetect, "image/jpeg");
   
   document.querySelector('#dialog').style.display = "none";
   document.querySelector('#accept').style.display = "none";
   document.querySelector('#cancel').style.display = "none";
   document.querySelector('#camselect').style.display = "none";
+  document.querySelector('#modeselect').style.display = "none";
   document.querySelector('#restart').style.display = "block";
   document.querySelector('#output').style.display = "block";
   document.querySelector('#output').innerHTML = "";
@@ -138,7 +146,7 @@ function showAgreement() {
 //
 //
 function checkOrientation() {
-  if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+  if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {    
     if(screen.orientation.type.toLowerCase().includes('landscape')) {
       document.querySelector('#top').style.display = "none";
       document.querySelector('#main').style.height = "100%";
@@ -150,6 +158,15 @@ function checkOrientation() {
 }
 window.addEventListener("orientationchange", checkOrientation);
 
+function switchMode() {
+  if(mode == 'vision') {
+    mode = 'face'
+    document.querySelector('#modeselect').innerHTML = '&#x1f9d1;'
+  } else {
+    mode = 'vision'
+    document.querySelector('#modeselect').innerHTML = '&#x1f3ec;'
+  }
+}
 
 //
 // Helper util gets real video element height

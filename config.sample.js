@@ -1,5 +1,8 @@
 //
-// Config here! CHANGE THESE VALUES!!
+// Change these values
 //
-const API_ENDPOINT = "{{CHANGEME}}.cognitiveservices.azure.com";
-const API_KEY = "{{CHANGEME}}";
+const FACE_API_ENDPOINT = "{{CHANGEME}}.cognitiveservices.azure.com";
+const FACE_API_KEY = "{{CHANGEME}}";
+
+const VISION_API_ENDPOINT = "{{CHANGEME}}.cognitiveservices.azure.com";
+const VISION_API_KEY = "{{CHANGEME}}";
