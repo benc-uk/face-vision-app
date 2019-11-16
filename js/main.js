@@ -19,7 +19,6 @@ navigator.mediaDevices.enumerateDevices()
       deviceIds.push(deviceInfo.deviceId);
     }
   }
-  selectedDevice = 2
 })
 .then(openCamera)
 .catch(err => showError(err));
@@ -127,7 +126,7 @@ function showError(err) {
 //
 function showHelp() {
   document.querySelector('#dialog').style.display = "block";
-  document.querySelector('#dialog').innerHTML = `Face API Demo App v0.2.0<br>(C) Ben Coleman 2019<br><a href="https://github.com/benc-uk/face-api-app">github.com/benc-uk/face-api-app</a> `
+  document.querySelector('#dialog').innerHTML = `Azure Cognitive Services Demo v0.3.0<br>(C) Ben Coleman 2019<br><a href="https://github.com/benc-uk/face-api-app">github.com/benc-uk/face-api-app</a> `
 }
 
 //
@@ -161,10 +160,10 @@ window.addEventListener("orientationchange", checkOrientation);
 function switchMode() {
   if(mode == 'vision') {
     mode = 'face'
-    document.querySelector('#modeselect').innerHTML = '&#x1f9d1;'
+    document.querySelector('#modeselect').innerHTML = '<i class="fas fa-grin-alt fa-fw"></i>'
   } else {
     mode = 'vision'
-    document.querySelector('#modeselect').innerHTML = '&#x1f3ec;'
+    document.querySelector('#modeselect').innerHTML = '<i class="fa fa-image fa-fw"></i>'
   }
 }
 
@@ -185,3 +184,4 @@ function videoDimensions(video) {
     height: height
   };
 }
+

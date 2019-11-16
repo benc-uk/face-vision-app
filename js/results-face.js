@@ -53,7 +53,7 @@ function processFaceResult(face) {
   <h2 style="color:${color}">${faceAttr.gender} ${faceAttr.age}</h2>
   <table style="color:${color}">
     <tr><td>Smile:</td><td>${parseFloat(faceAttr.smile * 100).toFixed(1)+"%"}</td></tr>
-    <tr><td>Glasses:</td><td>${faceAttr.glasses}</td></tr>
+    <tr><td>Glasses:</td><td>${faceAttr.glasses.replace(/([a-z])([A-Z])/g, '$1<br>$2')}</td></tr>
     <tr><td>Hair:</td><td>${hairColor}</td></tr>
     <tr><td>Bald:</td><td>${parseFloat(face.faceAttributes.hair.bald * 100).toFixed(1)+"%"}</td></tr>
     <tr><td>Beard:</td><td>${parseFloat(faceAttr.facialHair.beard * 100).toFixed(1)+"%"}</td></tr>

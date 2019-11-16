@@ -9,13 +9,29 @@ body, html {
 
 button {
   box-shadow: 0px 5px 10px 5px rgba(0,0,0,0.6);
-  font-size: 2rem; 
+  font-size: 3rem; 
   color: rgb(194, 194, 194); 
   background-color: rgb(37, 37, 37);
   padding: 5px;
   border: 3px solid rgb(27, 27, 27);
   cursor: pointer;
   border-radius: 10%;
+  color: #4381df
+}
+
+@media (max-width:800px) {
+  button {
+    font-size: 1.7rem; 
+  }
+  #modeselect {
+    top: 4rem;
+  }
+  #accept {
+    font-size: 2.2rem;
+  }
+  #cancel {
+    font-size: 2.2rem;
+  }    
 }
 
 video {
@@ -24,14 +40,14 @@ video {
   max-height: 100%;
   margin: 0;
   padding: 0;
-  border-radius: 5%;
+  border-radius: 2%;
   border: 3px solid #111;
 }
 
 canvas {
   margin: 0;
   padding: 0;
-  border-radius: 5%;
+  border-radius: 2%;
   border: 3px solid #111;
 }
 
@@ -48,34 +64,32 @@ canvas {
 
 #camselect {
   position: absolute;
-  top: 20px;
+  top: 1rem;
   right: 20px;
   z-index: 200;
-  width: 70px;
 }
 
 #modeselect {
   position: absolute;
-  top: 100px;
+  top: 7rem;
   right: 20px;
   z-index: 200;
-  width: 70px;
 }
 
 #accept {
-  font-size: 3rem; 
   position: absolute;
-  bottom: 30px;
+  bottom: 5rem;
   left: 20%;
-  z-index: 20000;
+  z-index: 300;
+  color: #13a51a;
 }
 
 #cancel {
-  font-size: 3rem;
   position: absolute;
-  bottom: 30px;
+  bottom: 5rem;
   right: 20%;
-  z-index: 20000;
+  z-index: 300;
+  color: #ca281d;
 }
 
 #restart {
@@ -141,8 +155,9 @@ table td {
 #helpicon {
   position: absolute; 
   top: 10px; 
-  right: 20px; 
-  font-size: 200%;
+  right: 10px; 
+  font-size: 170%;
   cursor: pointer;
   background-color: rgba(0, 0, 0, 0.2);
+  color: #4381df
 }
