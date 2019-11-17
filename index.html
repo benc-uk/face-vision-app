@@ -15,14 +15,10 @@
 </head>
 
 <body>
-  <div id="top">
-    <h2 class="center">👨🏡 Vision Demo App</h2>
-    <div onclick="showHelp()" id="helpicon"><i class="fa fa-question-circle fa-fw"></i></div>
-  </div>
-
   <div class="center" id="main">
     <button id="camselect" onclick="switchCameras()"><i class="fas fa-camera fa-fw"></i></button>
-    <button id="modeselect" onclick="switchMode()"><i class="fas fa-grin-alt fa-fw"></i></button>
+    <button id="modeselect" onclick="setMode(mode == 'face' ? 'vision' : 'face')"><i class="fas fa-grin-alt fa-fw"></i></button>
+
     <button id="accept" class="hidden" onclick="acceptPhoto()"><i class="fas fa-check-square fa-fw"></i></button>
     <button id="cancel" class="hidden" onclick="cancelPhoto()"><i class="fas fa-times-circle fa-fw"></i></button>    
     <button id="restart" class="hidden" onclick="restart()"><i class="fas fa-redo fa-fw"></i></button>
@@ -36,13 +32,11 @@
   <div class="center" id="output">
   </div> 
 
+  <script src="js/cookies.js"></script>
   <script src="js/colors.js"></script>
   <script src="js/main.js"></script>
   <script src="js/results-face.js"></script>
   <script src="js/results-vision.js"></script>
-  <script>
-    checkOrientation()
-  </script>
 
 </body>
 </html>
