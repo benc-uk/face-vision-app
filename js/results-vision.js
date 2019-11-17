@@ -51,20 +51,6 @@ function analyzePhotoVision(blob) {
         }
       }
 
-      if(data.categories) {
-        for(let cat of data.categories) {
-          table.innerHTML += `<tr><td>Category:</td><td>${cat.name} ${parseFloat(cat.score * 100).toFixed(1)+"%"}</td></tr>`
-          // Special case for celebrities in people_ cat
-          if(cat.name == 'people_') {
-            if(cat.detail && cat.detail.celebrities) {
-              for(let celeb of cat.detail.celebrities) {
-                table.innerHTML += `<tr><td>Celebrity:</td><td>${celeb.name} ${parseFloat(celeb.confidence * 100).toFixed(1)+"%"}</td></tr>`
-              }
-            }
-          }
-        }
-      }
-
       if(data.tags) {
         let t = 0;
         for(let tag of data.tags) {
@@ -82,6 +68,21 @@ function analyzePhotoVision(blob) {
         let tagList = data.description.tags.join(', ');
         table.innerHTML += `<tr><td>Tags:</td><td>${tagList}</td></tr>`
       }
+
+      if(data.categories) {
+        for(let cat of data.categories) {
+          table.innerHTML += `<tr><td>Category:</td><td>${cat.name} ${parseFloat(cat.score * 100).toFixed(1)+"%"}</td></tr>`
+          // Special case for celebrities in people_ cat
+          if(cat.name == 'people_') {
+            if(cat.detail && cat.detail.celebrities) {
+              for(let celeb of cat.detail.celebrities) {
+                table.innerHTML += `<tr><td>Celebrity:</td><td>${celeb.name} ${parseFloat(celeb.confidence * 100).toFixed(1)+"%"}</td></tr>`
+              }
+            }
+          }
+        }
+      }
+
     })
     .catch(err => {
       showError(err);

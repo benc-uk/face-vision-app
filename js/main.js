@@ -33,8 +33,10 @@ function openCamera() {
   };
   navigator.mediaDevices.getUserMedia(constraints)
   .then(stream => {
-    window.stream = stream
-    video.srcObject = stream
+    window.stream = stream;
+    video.srcObject = stream;
+    document.querySelector('#camselect').style.display = "block";
+    document.querySelector('#modeselect').style.display = "block";
   })
   .catch(err => showError(err.toString() + "<br>Make sure you accept camera permissions<br><a href='javascript:location.reload()'>Try reloading page</a>"));
 }
@@ -59,6 +61,7 @@ function cancelPhoto() {
   document.querySelector('#camselect').style.display = "block";
   document.querySelector('#modeselect').style.display = "block";
   document.querySelector('#dialog').style.display = "none";
+  document.querySelector('#main').style.height = "95%";
 }
 
 //
@@ -87,7 +90,9 @@ video.onclick = function() {
   document.querySelector('#cancel').style.display = "block";
   document.querySelector('#camselect').style.display = "none";
   document.querySelector('#modeselect').style.display = "none";
-  
+  // Fix for output being waaay off the bottom of the page
+  document.querySelector('#main').style.height = "auto";
+
   showAgreement();
 };
 
@@ -109,6 +114,7 @@ function acceptPhoto() {
   document.querySelector('#cancel').style.display = "none";
   document.querySelector('#camselect').style.display = "none";
   document.querySelector('#modeselect').style.display = "none";
+
   document.querySelector('#restart').style.display = "block";
   document.querySelector('#output').style.display = "block";
   document.querySelector('#output').innerHTML = "";

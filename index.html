@@ -16,20 +16,25 @@
 
 <body>
   <div class="center" id="main">
-    <button id="camselect" onclick="switchCameras()"><i class="fas fa-camera fa-fw"></i></button>
-    <button id="modeselect" onclick="setMode(mode == 'face' ? 'vision' : 'face')"><i class="fas fa-grin-alt fa-fw"></i></button>
+
+    <div id="dialog" class="hidden" onclick="document.querySelector('#dialog').style.display = `none`"></div>
 
     <button id="accept" class="hidden" onclick="acceptPhoto()"><i class="fas fa-check-square fa-fw"></i></button>
     <button id="cancel" class="hidden" onclick="cancelPhoto()"><i class="fas fa-times-circle fa-fw"></i></button>    
-    <button id="restart" class="hidden" onclick="restart()"><i class="fas fa-redo fa-fw"></i></button>
+    
+    <div id="vidwrap">
+      <button id="restart" class="hidden" onclick="restart()"><i class="fas fa-redo fa-fw"></i></button>      
+      <button id="camselect" class="hidden" onclick="switchCameras()"><i class="fas fa-camera fa-fw"></i></button>
+      <button id="modeselect" class="hidden" onclick="setMode(mode == 'face' ? 'vision' : 'face')"><i class="fas fa-grin-alt fa-fw"></i></button>
+              
+      <video autoplay>
+      </video>
+      <canvas class="hidden"></canvas>
+    </div>
 
-    <video autoplay></video>
-    <canvas class="hidden"></canvas>
-
-    <div id="dialog" class="hidden" onclick="document.querySelector('#dialog').style.display = `none`"></div>
   </div>
 
-  <div class="center" id="output">
+  <div id="output" class="center">
   </div> 
 
   <script src="js/cookies.js"></script>
