@@ -1,10 +1,16 @@
 const VERSION = "0.3.1"
+const main = document.querySelector('#main');
+const vidwrap = document.querySelector('#vidwrap');
+//const output = document.querySelector('#output');
 const video = document.querySelector('video');
 const canvas = document.querySelector('canvas');
 var selectedDevice = 0;
 var deviceIds = [];
+var wide = -1;
 
 setMode(getCookie('mode') ? getCookie('mode') : "face");
+
+window.addEventListener('resize', resizeOrRotateHandler)
 
 // Start by finding all media devices
 navigator.mediaDevices.enumerateDevices()
@@ -33,14 +39,33 @@ function openCamera() {
   };
   navigator.mediaDevices.getUserMedia(constraints)
   .then(stream => {
-    window.stream = stream;
     video.srcObject = stream;
     document.querySelector('#camselect').style.display = "block";
     document.querySelector('#modeselect').style.display = "block";
+    document.querySelector('#fullscreen').style.display = "block";
+    video.classList.remove('hidden');
+    resizeOrRotateHandler()
   })
   .catch(err => showError(err.toString() + "<br>Make sure you accept camera permissions<br><a href='javascript:location.reload()'>Try reloading page</a>"));
 }
 
+//
+//
+//
+function resizeOrRotateHandler() {
+  if(window.innerWidth > window.innerHeight) {
+    main.style.height = "97%";
+    video.style.height = "100%";
+    main.style.width = "99%";   
+    video.style.width = "100%"; 
+  } else {
+    main.style.width = "99%";  
+    video.style.width = "100%";  
+    main.style.height = null;
+    video.style.height = null;
+  } 
+
+}
 //
 //
 //
@@ -60,8 +85,8 @@ function cancelPhoto() {
   document.querySelector('#cancel').style.display = "none";
   document.querySelector('#camselect').style.display = "block";
   document.querySelector('#modeselect').style.display = "block";
+  document.querySelector('#fullscreen').style.display = "block";
   document.querySelector('#dialog').style.display = "none";
-  document.querySelector('#main').style.height = "95%";
 }
 
 //
@@ -73,10 +98,19 @@ function restart() {
   cancelPhoto()
 }
 
+function fullscreen() {
+  if(document.fullscreenElement && document.fullscreenElement !== null)
+    document.exitFullscreen();
+  else 
+    document.querySelector('html').requestFullscreen()
+}
+
+
 //
 //
 //
 video.onclick = function() {
+  
   let vidDim = videoDimensions(video);
   canvas.width = vidDim.width;
   canvas.height = vidDim.height;
@@ -90,8 +124,7 @@ video.onclick = function() {
   document.querySelector('#cancel').style.display = "block";
   document.querySelector('#camselect').style.display = "none";
   document.querySelector('#modeselect').style.display = "none";
-  // Fix for output being waaay off the bottom of the page
-  document.querySelector('#main').style.height = "auto";
+  document.querySelector('#fullscreen').style.display = "none";
 
   showAgreement();
 };
@@ -160,6 +193,7 @@ function showAgreement() {
 }
 
 // function checkOrientation() {
+//   console.log(screen.orientation.type)
 //   if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {    
 //     if(screen.orientation.type.toLowerCase().includes('landscape')) {
 //       document.querySelector('#top').style.display = "none";
