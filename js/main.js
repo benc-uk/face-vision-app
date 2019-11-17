@@ -43,7 +43,6 @@ function openCamera() {
     document.querySelector('#camselect').style.display = "block";
     document.querySelector('#modeselect').style.display = "block";
     document.querySelector('#fullscreen').style.display = "block";
-    video.classList.remove('hidden');
     resizeOrRotateHandler()
   })
   .catch(err => showError(err.toString() + "<br>Make sure you accept camera permissions<br><a href='javascript:location.reload()'>Try reloading page</a>"));
@@ -54,17 +53,16 @@ function openCamera() {
 //
 function resizeOrRotateHandler() {
   if(window.innerWidth > window.innerHeight) {
-    main.style.height = "97%";
-    video.style.height = "100%";
-    main.style.width = "99%";   
+    main.style.width = "100%";   
+    main.style.height = "95%";
     video.style.width = "100%"; 
+    video.style.height = "100%";
   } else {
-    main.style.width = "99%";  
-    video.style.width = "100%";  
+    main.style.width = "95%";  
     main.style.height = null;
+    video.style.width = "100%";  
     video.style.height = null;
   } 
-
 }
 //
 //
@@ -110,7 +108,6 @@ function fullscreen() {
 //
 //
 video.onclick = function() {
-  
   let vidDim = videoDimensions(video);
   canvas.width = vidDim.width;
   canvas.height = vidDim.height;
@@ -118,7 +115,7 @@ video.onclick = function() {
   canvas.getContext('2d').drawImage(video, 0, 0, vidDim.width, vidDim.height);
 
   video.style.display = "none";
-  canvas.style.display = "inline";
+  canvas.style.display = "block";
 
   document.querySelector('#accept').style.display = "block";
   document.querySelector('#cancel').style.display = "block";

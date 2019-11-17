@@ -16,7 +16,8 @@ button {
   border: 3px solid rgb(27, 27, 27);
   cursor: pointer;
   border-radius: 10%;
-  color: #31b7f5
+  color: #31b7f5;
+  display: none;
 }
 
 /* Mobile tweaks */ 
@@ -54,49 +55,37 @@ table td {
 }
 
 video { 
-  /* width: 99%;
-  height: 99%; */
+  width: 100%;
+  height: 100%; 
   margin: 0;
   padding: 0;
-  /* border-radius: 5%;
-  border: 3px solid #111; */
-  /* background-color: #000000;  */
-
 }
 
-canvas {
-  /* width: 99%;
-  height: 99%; */
+canvas { 
+  display: none;
   margin: 0;
   padding: 0;
-  border-radius: 2%;
-  border: 3px solid #111;
-  display: block;
-  z-index: 0;
+  margin-left: auto;
+  margin-right: auto;
 }
 
-#vidwrap {
-  /* border-radius: 5%;
-  border: 3px solid #111; */
-  display: inline; 
-  position: relative; 
-  z-index: 0; 
-  /* background-color: #13a51a; */
-}
 
 #main {
-  /* background-color: #3d0055; */
-  padding: 0;
-  margin: 0;
-  padding-top: 10px;
+  /* background-color: #3d0055;  */
+  margin: 0px;
+  padding: 0px;
   margin-left: auto;
   margin-right: auto;
   text-align: center;
+  padding-top: 1rem;
+  overflow: hidden;
 }
 
 #output {
   color: rgb(218, 218, 218);
-  display: block;
+  display: none;
+  margin: 10px;
+  padding: 10px;
 }
 
 #camselect {
@@ -144,6 +133,7 @@ canvas {
 }
 
 #dialog {
+  display: none;
   box-shadow: 0px 5px 10px 5px rgba(0,0,0,0.6);
   font-size: 120%;
   position: absolute;

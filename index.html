@@ -15,34 +15,23 @@
 </head>
 
 <body>
-
-
-    <button id="restart" class="hidden" onclick="restart()"><i class="fas fa-redo fa-fw"></i></button>      
-    <button id="camselect" class="cmdbut hidden" onclick="switchCameras()"><i class="fas fa-camera fa-fw"></i></button>
-    <button id="modeselect" class="cmdbut hidden" onclick="setMode(mode == 'face' ? 'vision' : 'face')"><i class="fas fa-grin-alt fa-fw"></i></button>
-    <button id="fullscreen" class="cmdbut hidden" onclick="fullscreen()"><i class="fas fa-expand fa-fw"></i></button>
-    <button id="accept" class="hidden" onclick="acceptPhoto()"><i class="fas fa-check-square fa-fw"></i></button>
-    <button id="cancel" class="hidden" onclick="cancelPhoto()"><i class="fas fa-times-circle fa-fw"></i></button>    
+  <button id="restart" onclick="restart()"><i class="fas fa-redo fa-fw"></i></button>      
+  <button id="camselect" onclick="switchCameras()"><i class="fas fa-camera fa-fw"></i></button>
+  <button id="modeselect" onclick="setMode(mode == 'face' ? 'vision' : 'face')"><i class="fas fa-grin-alt fa-fw"></i></button>
+  <button id="fullscreen" onclick="fullscreen()"><i class="fas fa-expand fa-fw"></i></button>
+  <button id="accept" onclick="acceptPhoto()"><i class="fas fa-check-square fa-fw"></i></button>
+  <button id="cancel" onclick="cancelPhoto()"><i class="fas fa-times-circle fa-fw"></i></button>    
 
   <div class="center" id="main">
-    <div id="dialog" class="hidden" onclick="document.querySelector('#dialog').style.display = `none`"></div>
+    <div id="dialog" onclick="document.querySelector('#dialog').style.display = `none`"></div>
 
-    <div id="vidwrap">
+    <video autoplay class="">
+    </video>
 
-              
-      <video autoplay class="">
-      </video>
-
-      <canvas class="hidden">
-      </canvas>
-    </div>
-
+    <canvas></canvas>
   </div>
 
-  <div id="output" class="center">
-  </div> 
-
-
+  <div id="output" class="center"></div> 
 
   <script src="js/cookies.js"></script>
   <script src="js/colors.js"></script>
