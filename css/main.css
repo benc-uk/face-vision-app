@@ -33,10 +33,10 @@ button {
     left: 9rem !important;
   }  
   #accept {
-    font-size: 2.2rem;
+    font-size: 2.6rem;
   }
   #cancel {
-    font-size: 2.2rem;
+    font-size: 2.6rem;
   }    
 }
 
@@ -110,15 +110,17 @@ canvas {
 }
 
 #accept {
-  bottom: 2rem;
-  left: 20%;
+  bottom: 3rem;
+  left: 50%;
   color: #13a51a;
+  transform: translate(-150%, 0);
 }
 
 #cancel {
-  bottom: 2rem;
-  right: 20%;
+  bottom: 3rem;
+  left: 50%;
   color: #ca281d;
+  transform: translate(150%, 0);
 }
 
 #dialog {
@@ -128,8 +130,10 @@ canvas {
   position: absolute;
   left: 0;
   right: 0;
-  top: 20px;
-  max-width: 60%;
+  top: 50%;
+  transform: translate(0, -50%);
+  width: 40%;
+  max-width: 70%;
   padding: 10px;
   text-align: center;
   margin: 0 auto;
@@ -146,6 +150,15 @@ canvas {
 #dialog a {
   font-size: 80%;
   color: aqua;
+}
+
+#spinner {
+  display: none;
+  position: absolute;
+  top: 5rem;
+  left: 50%; 
+  transform: translate(-50%, 0);
+  width: 100px;
 }
 
 .center { 

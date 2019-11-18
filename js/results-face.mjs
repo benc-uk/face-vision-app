@@ -1,7 +1,11 @@
+import { randomColor } from './utils.mjs';
+import { canvas, canvasScale, showError, spinner } from './app.mjs';
+
 //
+// Analyze an image for faces with cognitive service API
+// Image is passed as a blob from app.js
 //
-//
-function analyzePhotoFaceDetect(blob) {
+export function analyzePhotoFaceDetect(blob) {
   let apiUrl = `https://${FACE_API_ENDPOINT}/face/v1.0/detect?returnFaceAttributes=age,gender,smile,facialHair,glasses,emotion,hair,makeup`
   fetch(apiUrl, {
       method: 'POST',
@@ -25,6 +29,7 @@ function analyzePhotoFaceDetect(blob) {
       for(let face of data) {
         processFaceResult(face)
       }
+      spinner.style.display = 'none';
     })
     .catch(err => {
       showError(err);
@@ -32,11 +37,10 @@ function analyzePhotoFaceDetect(blob) {
 }
 
 //
-//
+// Display face information with table of details and box around the face
 //
 function processFaceResult(face) {
   let color = randomColor({ luminosity: 'light' });
-  let scaleFactor = Math.max(canvas.width / 2000, 0.5);
 
   let hairColor = "None";
   let hairColorConfidence = 0;
@@ -74,18 +78,18 @@ function processFaceResult(face) {
   </table>`;
 
   // Face boxes
-  let canvasCtx = document.querySelector('canvas').getContext('2d');
+  let canvasCtx = canvas.getContext('2d');
 
   canvasCtx.strokeStyle = color;
   canvasCtx.fillStyle = color;
   canvasCtx.shadowColor = "#000000"
-  canvasCtx.shadowOffsetX = 4 * scaleFactor;
-  canvasCtx.shadowOffsetY = 4 * scaleFactor;
-  canvasCtx.lineWidth = 6 * scaleFactor;
+  canvasCtx.shadowOffsetX = 4 * canvasScale;
+  canvasCtx.shadowOffsetY = 4 * canvasScale;
+  canvasCtx.lineWidth = 6 * canvasScale;
   canvasCtx.beginPath();
   canvasCtx.rect(face.faceRectangle.left, face.faceRectangle.top, face.faceRectangle.width, face.faceRectangle.height);
   canvasCtx.stroke();
-  canvasCtx.font = `${40 * scaleFactor}px Arial`;
-  let offset = 10 * scaleFactor;
+  canvasCtx.font = `${40 * canvasScale}px Arial`;
+  let offset = 10 * canvasScale;
   canvasCtx.fillText(`${faceAttr.gender} (${faceAttr.age})`, face.faceRectangle.left, face.faceRectangle.top - offset);
 }
