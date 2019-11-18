@@ -1,8 +1,11 @@
-let output = document.querySelector('#output')
-var scaleFactor
+import { randomColor } from './utils.mjs';
+import { canvas, output, spinner, canvasScale, showError } from './app.mjs';
 
-function analyzePhotoVision(blob) { 
-  scaleFactor = Math.max(canvas.width / 2000, 0.5);
+//
+// Analyze an image for content with cognitive service API
+// Image is passed as a blob from app.js
+//
+export function analyzePhotoVision(blob) { 
   let apiUrl = `https://${VISION_API_ENDPOINT}/vision/v2.1/analyze?visualFeatures=Color,Brands,Categories,Faces,Tags,Description,Objects&details=Celebrities,Landmarks`
   fetch(apiUrl, {
       method: 'POST',
@@ -24,6 +27,7 @@ function analyzePhotoVision(blob) {
       output.innerHTML = '<br><table id="outtable"></table>';
       let table = document.querySelector('#outtable');
 
+      // Find & draw faces (age and gender)
       if(data.faces) {
         for(let face of data.faces) {
           let r = face.faceRectangle;
@@ -31,6 +35,7 @@ function analyzePhotoVision(blob) {
         }
       }
 
+      // Find and draw any objects
       if(data.objects) {
         for(let obj of data.objects) {
           let r = obj.rectangle;
@@ -38,6 +43,7 @@ function analyzePhotoVision(blob) {
         }
       }
 
+      // Find & draw brands
       if(data.brands) {
         for(let brand of data.brands) {
           let r = brand.rectangle;
@@ -45,12 +51,14 @@ function analyzePhotoVision(blob) {
         }
       }
 
+      // Show caption text
       if(data.description.captions) {
         for(let caption of data.description.captions) {
           table.innerHTML += `<tr><td>Caption:</td><td>${caption.text}</td></tr>`
         }
       }
 
+      // Get top 5 tags and confidence score
       if(data.tags) {
         let t = 0;
         for(let tag of data.tags) {
@@ -59,16 +67,19 @@ function analyzePhotoVision(blob) {
         }
       }
 
+      // Get colours
       if(data.color && data.color.dominantColors) {
         let colourList = data.color.dominantColors.join(', ');
         table.innerHTML += `<tr><td>Colours:</td><td>${colourList}</td></tr>`
       }
 
+      // Other tags, this is a long list so join as a string
       if(data.description.tags) {
         let tagList = data.description.tags.join(', ');
         table.innerHTML += `<tr><td>Tags:</td><td>${tagList}</td></tr>`
       }
 
+      // Categories hold some info and celebrities if they are detected
       if(data.categories) {
         for(let cat of data.categories) {
           table.innerHTML += `<tr><td>Category:</td><td>${cat.name} ${parseFloat(cat.score * 100).toFixed(1)+"%"}</td></tr>`
@@ -82,31 +93,33 @@ function analyzePhotoVision(blob) {
           }
         }
       }
-
+      spinner.style.display = 'none';
     })
     .catch(err => {
       showError(err);
     })
+
+    
 }
 
 //
-//
+// Draw a box around a "thing" (face, object etc)
 //
 function visionItemBox(left, top, width, height, label) {
   let color = randomColor();
-  let canvasCtx = document.querySelector('canvas').getContext('2d');
+  let canvasCtx = canvas.getContext('2d');
 
   canvasCtx.strokeStyle = color;
   canvasCtx.fillStyle = color;
   canvasCtx.shadowColor = "#000000"
-  canvasCtx.shadowOffsetX = 4 * scaleFactor;
-  canvasCtx.shadowOffsetY = 4 * scaleFactor;
-  canvasCtx.lineWidth = 6 * scaleFactor;
+  canvasCtx.shadowOffsetX = 4 * canvasScale;
+  canvasCtx.shadowOffsetY = 4 * canvasScale;
+  canvasCtx.lineWidth = 6 * canvasScale;
   canvasCtx.beginPath();
   canvasCtx.rect(left, top, width, height);
   canvasCtx.stroke();
-  canvasCtx.font = `${40 * scaleFactor}px Arial`;
-  let offset = 10 * scaleFactor;
+  canvasCtx.font = `${40 * canvasScale}px Arial`;
+  let offset = 10 * canvasScale;
   let labelY = top - offset
   if(top < 30) {
     labelY = top + height + (offset * 3)

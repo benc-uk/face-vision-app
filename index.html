@@ -6,38 +6,35 @@
   <link rel="shortcut icon" href="img/icon.png" type="image/png">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <script src="https://kit.fontawesome.com/7b5f2a40f9.js" crossorigin="anonymous"></script>
   <title>Azure Cognitive Demo App</title>
-
-  <link rel="stylesheet" href="css/main.css">
-
+  
+  <!-- Use fontawesome, because it's awesome -->
+  <script src="https://kit.fontawesome.com/7b5f2a40f9.js" crossorigin="anonymous"></script>
+  
+  <!-- App files -->
   <script src="config.js"></script>
+  <script type="module" src="./js/app.mjs"></script>
+  <link rel="stylesheet" href="css/main.css">
 </head>
 
 <body>
-  <button id="restart" onclick="restart()"><i class="fas fa-redo fa-fw"></i></button>      
-  <button id="camselect" onclick="switchCameras()"><i class="fas fa-camera fa-fw"></i></button>
-  <button id="modeselect" onclick="setMode(mode == 'face' ? 'vision' : 'face')"><i class="fas fa-grin-alt fa-fw"></i></button>
-  <button id="fullscreen" onclick="fullscreen()"><i class="fas fa-expand fa-fw"></i></button>
-  <button id="accept" onclick="acceptPhoto()"><i class="fas fa-check-square fa-fw"></i></button>
-  <button id="cancel" onclick="cancelPhoto()"><i class="fas fa-times-circle fa-fw"></i></button>    
+  <button id="restart"><i class="fas fa-redo fa-fw"></i></button>      
+  <button id="camselect"><i class="fas fa-camera fa-fw"></i></button>
+  <button id="modeselect"><i class="fas fa-grin-alt fa-fw"></i></button>
+  <button id="fullscreen"><i class="fas fa-expand fa-fw"></i></button>
+  <button id="accept"><i class="fas fa-check-square fa-fw"></i></button>
+  <button id="cancel"><i class="fas fa-times-circle fa-fw"></i></button>    
 
   <div class="center" id="main">
+    <img id="spinner" src="img/spinner.gif">
     <div id="dialog" onclick="document.querySelector('#dialog').style.display = `none`"></div>
 
-    <video autoplay class="">
-    </video>
-
+    <video autoplay class=""></video>
+    
     <canvas></canvas>
   </div>
 
   <div id="output" class="center"></div> 
-
-  <script src="js/cookies.js"></script>
-  <script src="js/colors.js"></script>
-  <script src="js/main.js"></script>
-  <script src="js/results-face.js"></script>
-  <script src="js/results-vision.js"></script>
 
 </body>
 </html>
