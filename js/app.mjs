@@ -24,6 +24,10 @@ var mode;
 
 window.addEventListener('resize', resizeOrRotateHandler)
 window.addEventListener('load', evt => {
+  var isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+  if(isSafari) {
+    showError("Safari is not supported<br>Please use a proper modern browser such as Chrome")
+  }
   setMode(getCookie('mode') ? getCookie('mode') : "face");
   // Start by finding all media devices
   navigator.mediaDevices.enumerateDevices()
