@@ -2,7 +2,7 @@ import { analyzePhotoFaceDetect } from './results-face.mjs';
 import { analyzePhotoVision } from './results-vision.mjs';
 import { setCookie, getCookie, toggleFullScreen, videoDimensions } from './utils.mjs';
 
-const VERSION = "0.3.1"
+const VERSION = "0.4.0"
 export const main = document.querySelector('#main');
 export const output = document.querySelector('#output');
 export const dialog = document.querySelector('#dialog');
@@ -17,14 +17,22 @@ const butFullscreen = document.querySelector('#fullscreen');
 const butCancel = document.querySelector('#cancel');
 const butAccept = document.querySelector('#accept');
 
-export var canvasScale;
-var selectedDevice = 0;
-var deviceIds = [];
-var mode;
+export var canvasScale;   // Used to scale any drawing done
+var selectedDevice = 0;   // Currently selected camera id
+var deviceIds = [];       // List of all cameras (device ids)
+var apiMode;              // Either 'face' or 'vision'
 
+//
+// Handle resize and rotate events
+//
 window.addEventListener('resize', resizeOrRotateHandler)
+
+//
+// Start here! 
+//
 window.addEventListener('load', evt => {
-  setMode(getCookie('mode') ? getCookie('mode') : "face");
+  // Set starting API mode either stored as cookie or fallback to default
+  setApiMode(getCookie('mode') ? getCookie('mode') : "face");
   
   var isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
   if(isSafari) {
@@ -40,6 +48,9 @@ window.addEventListener('load', evt => {
   }
 })
 
+//
+// Call mediaDevices.enumerateDevices and populate deviceIds array and selectedDevice
+//
 function listDevices() {
   // Now list all devices
   navigator.mediaDevices.enumerateDevices()
@@ -47,10 +58,11 @@ function listDevices() {
     for (let deviceInfo of deviceList) {
       // Only care about cameras
       if (deviceInfo.kind === 'videoinput') {   
-        // For debugging
         //alert(JSON.stringify(deviceInfo));  
+
         // Skip infrared camera
         if(deviceInfo.label && deviceInfo.label.toLowerCase().includes(" ir ")) continue;
+        // Store id in array for later use
         deviceIds.push(deviceInfo.deviceId);
       }
     }
@@ -59,8 +71,9 @@ function listDevices() {
   .then(openCamera)
   .catch(err => showError(err));
 }
+
 //
-//
+// Open media stream for camera with id selectedDevice
 //
 function openCamera() {
   const constraints = {
@@ -68,17 +81,19 @@ function openCamera() {
   };
   navigator.mediaDevices.getUserMedia(constraints)
   .then(stream => {
+    // Display the video
     video.srcObject = stream;
     butCamSel.style.display = "block";
     butModeSel.style.display = "block";
     butFullscreen.style.display = "block";
+    // Handle the screen (re)sizing
     resizeOrRotateHandler()
   })
   .catch(err => showError(err.toString() + "<br>Make sure you accept camera permissions<br><a href='javascript:location.reload()'>Try reloading page</a>"));
 }
 
 //
-//
+// Deals with landscape/portrait hassles with video object
 //
 function resizeOrRotateHandler() {
   if(window.innerWidth > window.innerHeight) {
@@ -93,8 +108,9 @@ function resizeOrRotateHandler() {
     video.style.height = null;
   } 
 }
+
 //
-//
+// Button event handler: Change selected camera
 //
 butCamSel.addEventListener('click', evt => {
   selectedDevice = ++selectedDevice % deviceIds.length; 
@@ -102,12 +118,15 @@ butCamSel.addEventListener('click', evt => {
   openCamera();
 })
 
+//
+// Button event handler: Change API mode
+//
 butModeSel.addEventListener('click', evt => {
-  setMode(mode == 'face' ? 'vision' : 'face')
+  setApiMode(apiMode == 'face' ? 'vision' : 'face')
 })
 
 //
-//
+// Button event handler: User cancels the photo, return to video mode
 //
 function cancelPhoto() {
   video.style.display = "inline";
@@ -123,7 +142,7 @@ function cancelPhoto() {
 butCancel.addEventListener('click', cancelPhoto);
 
 //
-//
+// Button event handler: Restart and take another photo
 //
 butRestart.addEventListener('click', evt => {
   butRestart.style.display = "none";
@@ -131,10 +150,13 @@ butRestart.addEventListener('click', evt => {
   cancelPhoto()
 })
 
+//
+// TButton event handler: oggle fullscreen mode
+//
 butFullscreen.addEventListener('click', toggleFullScreen)
 
 //
-//
+// Take a snap of the video as a photo 
 //
 video.onclick = function() {
   let vidDim = videoDimensions(video);
@@ -157,7 +179,7 @@ video.onclick = function() {
 };
 
 //
-//
+// Button event handler: user accepts the photo, analyze it with the cognitive API
 //
 butAccept.addEventListener('click', evt => {
   // Set agreement cookie
@@ -165,8 +187,8 @@ butAccept.addEventListener('click', evt => {
 
   spinner.style.display = 'block';
 
-  // Calls function in results.js
-  if(mode == "vision")
+  // Convert canvas to a blob and process with the selected API
+  if(apiMode == "vision")
     canvas.toBlob(analyzePhotoVision, "image/jpeg");
   else
     canvas.toBlob(analyzePhotoFaceDetect, "image/jpeg");
@@ -183,20 +205,20 @@ butAccept.addEventListener('click', evt => {
 })
 
 //
+// Toggle between API modes
 //
-//
-function setMode(newMode) {
-  mode = newMode
-  if(mode == 'vision') {
+function setApiMode(newMode) {
+  apiMode = newMode
+  if(apiMode == 'vision') {
     butModeSel.innerHTML = '<i class="fas fa-image fa-fw"></i>'
   } else {
     butModeSel.innerHTML = '<i class="fa fa-grin-alt fa-fw"></i>'
   }
-  setCookie('mode', mode, 3000);
+  setCookie('mode', apiMode, 3000);
 }
 
 //
-//
+// Display error message of some kind
 //
 export function showError(err) {
   spinner.style.display = 'none';
@@ -206,7 +228,7 @@ export function showError(err) {
 
 
 //
-//
+// Display about/help only shown once at first start
 //
 function showHelp() {
   dialog.style.display = "block";
@@ -222,7 +244,7 @@ function showHelp() {
 }
 
 //
-//
+// Display terms of use, legal blah, only shown on first upload
 //
 function showAgreement() {
   // Only show if agreement cookie set true
