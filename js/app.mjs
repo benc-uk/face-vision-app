@@ -1,6 +1,6 @@
 import { analyzePhotoFaceDetect } from './results-face.mjs';
 import { analyzePhotoVision } from './results-vision.mjs';
-import { setCookie, getCookie } from './utils.mjs';
+import { setCookie, getCookie, toggleFullScreen, videoDimensions } from './utils.mjs';
 
 const VERSION = "0.3.1"
 export const main = document.querySelector('#main');
@@ -24,19 +24,31 @@ var mode;
 
 window.addEventListener('resize', resizeOrRotateHandler)
 window.addEventListener('load', evt => {
+  setMode(getCookie('mode') ? getCookie('mode') : "face");
+  
   var isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
   if(isSafari) {
-    showError("Safari is not supported<br>Please use a proper modern browser such as Chrome")
+    // Call unconstrained getUserMedia first to get past permissions issue on Safari
+    navigator.mediaDevices.getUserMedia({audio: false, video: true})
+    .then(listDevices)
+  } else {
+    listDevices()
   }
-  setMode(getCookie('mode') ? getCookie('mode') : "face");
-  // Start by finding all media devices
+
+  if(getCookie('firstRun') !== "false") {
+    showHelp()
+  }
+})
+
+function listDevices() {
+  // Now list all devices
   navigator.mediaDevices.enumerateDevices()
   .then(deviceList => {
-    
     for (let deviceInfo of deviceList) {
+      // Only care about cameras
       if (deviceInfo.kind === 'videoinput') {   
         // For debugging
-        console.log(deviceInfo);  
+        //alert(JSON.stringify(deviceInfo));  
         // Skip infrared camera
         if(deviceInfo.label && deviceInfo.label.toLowerCase().includes(" ir ")) continue;
         deviceIds.push(deviceInfo.deviceId);
@@ -46,13 +58,7 @@ window.addEventListener('load', evt => {
   })
   .then(openCamera)
   .catch(err => showError(err));
-
-  if(getCookie('firstRun') !== "false") {
-    showHelp()
-  }
-})
-
-
+}
 //
 //
 //
@@ -125,12 +131,7 @@ butRestart.addEventListener('click', evt => {
   cancelPhoto()
 })
 
-butFullscreen.addEventListener('click', evt => {
-  if(document.fullscreenElement && document.fullscreenElement !== null)
-    document.exitFullscreen();
-  else 
-    document.querySelector('html').requestFullscreen()
-})
+butFullscreen.addEventListener('click', toggleFullScreen)
 
 //
 //
@@ -220,7 +221,6 @@ function showHelp() {
   setCookie('firstRun', 'false', 3000);
 }
 
-
 //
 //
 //
@@ -231,24 +231,3 @@ function showAgreement() {
     dialog.innerHTML = `Press the tick button to upload this photo to the cloud and have Azure Cognitive Services analyse the contents.<br><a href="https://azure.microsoft.com/en-gb/support/legal/cognitive-services-terms/">In doing so you agree to these terms</a>`
   }
 }
-
-
-
-//
-// Helper util gets real video element height
-//
-function videoDimensions(video) {
-  var videoRatio = video.videoWidth / video.videoHeight;
-  var width = video.offsetWidth, height = video.offsetHeight;
-  var elementRatio = width / height;
-  if(elementRatio > videoRatio) 
-    width = height * videoRatio;
-  else 
-    height = width / videoRatio;
-  
-  return {
-    width: width,
-    height: height
-  };
-}
-

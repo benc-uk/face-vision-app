@@ -1,16 +1,17 @@
 import { randomColor } from './utils.mjs';
 import { canvas, output, spinner, canvasScale, showError } from './app.mjs';
+import { config } from '../config.mjs';
 
 //
 // Analyze an image for content with cognitive service API
 // Image is passed as a blob from app.js
 //
 export function analyzePhotoVision(blob) { 
-  let apiUrl = `https://${VISION_API_ENDPOINT}/vision/v2.1/analyze?visualFeatures=Color,Brands,Categories,Faces,Tags,Description,Objects&details=Celebrities,Landmarks`
+  let apiUrl = `https://${config.VISION_API_ENDPOINT}/vision/v2.1/analyze?visualFeatures=Color,Brands,Categories,Faces,Tags,Description,Objects&details=Celebrities,Landmarks`
   fetch(apiUrl, {
       method: 'POST',
       headers: {
-        'Ocp-Apim-Subscription-Key': VISION_API_KEY,
+        'Ocp-Apim-Subscription-Key': config.VISION_API_KEY,
         'Content-Type': 'application/octet-stream'
       },
       body: blob

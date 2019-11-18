@@ -33,3 +33,52 @@ export function getCookie(name) {
   }
   return null;
 }
+
+
+export function toggleFullScreen() {
+	if (document.fullscreenElement || document.mozFullScreenElement || document.webkitFullscreenElement) {
+		if (document.cancelFullScreen) {
+			document.cancelFullScreen();
+		} else {
+			if (document.mozCancelFullScreen) {
+				document.mozCancelFullScreen();
+			} else {
+				if (document.webkitCancelFullScreen) {
+					document.webkitCancelFullScreen();
+				}
+			}
+		}
+	} else {
+		const _element = document.documentElement;
+		if (_element.requestFullscreen) {
+			_element.requestFullscreen();
+		} else {
+			if (_element.mozRequestFullScreen) {
+				_element.mozRequestFullScreen();
+			} else {
+				if (_element.webkitRequestFullscreen) {
+					_element.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+				}
+			}
+		}
+	}
+};
+
+//
+// Helper util gets real video element height
+//
+export function videoDimensions(video) {
+  var videoRatio = video.videoWidth / video.videoHeight;
+  var width = video.offsetWidth, height = video.offsetHeight;
+  var elementRatio = width / height;
+  if(elementRatio > videoRatio) 
+    width = height * videoRatio;
+  else 
+    height = width / videoRatio;
+  
+  return {
+    width: width,
+    height: height
+  };
+}
+

@@ -1,16 +1,19 @@
 import { randomColor } from './utils.mjs';
 import { canvas, canvasScale, showError, spinner } from './app.mjs';
+import { config } from '../config.mjs';
 
 //
 // Analyze an image for faces with cognitive service API
 // Image is passed as a blob from app.js
 //
 export function analyzePhotoFaceDetect(blob) {
-  let apiUrl = `https://${FACE_API_ENDPOINT}/face/v1.0/detect?returnFaceAttributes=age,gender,smile,facialHair,glasses,emotion,hair,makeup`
+
+  var apiUrl = `https://${config.FACE_API_ENDPOINT}/face/v1.0/detect?returnFaceAttributes=age,gender,smile,facialHair,glasses,emotion,hair,makeup`
+
   fetch(apiUrl, {
       method: 'POST',
       headers: {
-        'Ocp-Apim-Subscription-Key': FACE_API_KEY,
+        'Ocp-Apim-Subscription-Key': config.FACE_API_KEY,
         'Content-Type': 'application/octet-stream'
       },
       body: blob
@@ -34,6 +37,10 @@ export function analyzePhotoFaceDetect(blob) {
     .catch(err => {
       showError(err);
     })
+}
+
+function processData(data) {
+  alert(data)
 }
 
 //

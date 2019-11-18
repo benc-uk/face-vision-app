@@ -6,9 +6,9 @@ This is a simple demo web app written in pure JS and HTML5 for capturing images 
 - Create a **Face API service account/instance** in Azure. Make a note of the endpoint and key. See also https://docs.microsoft.com/en-us/azure/cognitive-services/face/
 - Create a **Computer Vision API service account/instance** in Azure. Make a note of the endpoint and key. See also https://docs.microsoft.com/en-us/azure/cognitive-services/computer-vision/
 
-Copy/rename the `config.sample.js` file to `config.js`
+Copy/rename the `config.sample.mjs` file to `config.mjs`
 
-Edit `config.js` and change the following: 
+Edit `config.mjs` and change the following: 
 - `FACE_API_KEY` and `FACE_API_ENDPOINT` to your values for the face API
 - `VISION_API_KEY` and `VISION_API_ENDPOINT` to your values for the computer vision API
 
