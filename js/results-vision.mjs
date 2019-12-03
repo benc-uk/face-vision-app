@@ -6,8 +6,11 @@ import { config } from '../config.mjs';
 // Analyze an image for content with cognitive service API
 // Image is passed as a blob from app.js
 //
+
+const API_OPTIONS = 'visualFeatures=Color,Brands,Categories,Faces,Tags,Description,Objects&details=Celebrities,Landmarks'
+
 export function analyzePhotoVision(blob) { 
-  let apiUrl = `https://${config.VISION_API_ENDPOINT}/vision/v2.1/analyze?visualFeatures=Color,Brands,Categories,Faces,Tags,Description,Objects&details=Celebrities,Landmarks`
+  let apiUrl = `https://${config.VISION_API_ENDPOINT}/vision/v2.1/analyze?${API_OPTIONS}`
   fetch(apiUrl, {
       method: 'POST',
       headers: {

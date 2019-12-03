@@ -6,9 +6,12 @@ import { config } from '../config.mjs';
 // Analyze an image for faces with cognitive service API
 // Image is passed as a blob from app.js
 //
+
+const API_OPTIONS = 'returnFaceAttributes=age,gender,smile,facialHair,glasses,emotion,hair,makeup'
+
 export function analyzePhotoFaceDetect(blob) {
 
-  var apiUrl = `https://${config.FACE_API_ENDPOINT}/face/v1.0/detect?returnFaceAttributes=age,gender,smile,facialHair,glasses,emotion,hair,makeup`
+  var apiUrl = `https://${config.FACE_API_ENDPOINT}/face/v1.0/detect?${API_OPTIONS}`
 
   fetch(apiUrl, {
       method: 'POST',
