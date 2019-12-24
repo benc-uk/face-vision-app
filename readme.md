@@ -1,5 +1,7 @@
-# Azure Cognitive API - Pure HTML5/JS Demo
-This is a simple demo web app written in pure JS and HTML5 for capturing images from the device camera, sending them to Azure Cognitive Services, and processing/displaying the results
+# Azure Cognitive APIs - Pure HTML5/JS Client
+This is a simple demo web client app written in pure JS and HTML5 for capturing images from the device camera, sending them to Azure Cognitive Services, and processing/displaying the results
+
+It is optimized for mobile devices and browsers but can be used on a PC/Desktop browser also
 
 
 # Pre-Reqs
