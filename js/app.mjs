@@ -86,6 +86,9 @@ function openCamera() {
     butCamSel.style.display = "block";
     butModeSel.style.display = "block";
     butFullscreen.style.display = "block";
+
+    setInterval(captureImage, 2000)
+    
     // Handle the screen (re)sizing
     resizeOrRotateHandler()
   })
@@ -234,7 +237,6 @@ function showHelp() {
   dialog.style.display = "block";
   dialog.innerHTML = `<b>Azure Cognitive Services Demo v${VERSION}</b><br>
   <ul>
-    <li>Tap or click anywhere on the image to take a photo snapshot</li>
     <li>Click the camera icon to switch between cameras</li>
     <li>The face/image button switches between cognitive APIs</li>
   </ul>
@@ -250,6 +252,6 @@ function showAgreement() {
   // Only show if agreement cookie set true
   if(getCookie('termsAgreed') !== "true") {
     dialog.style.display = "block";
-    dialog.innerHTML = `Press the tick button to upload this photo to the cloud and have Azure Cognitive Services analyse the contents.<br><a href="https://azure.microsoft.com/en-gb/support/legal/cognitive-services-terms/">In doing so you agree to these terms</a>`
+    dialog.innerHTML = `Press the tick button to upload this image data to the cloud and have Azure Cognitive Services analyse the contents.<br><a href="https://azure.microsoft.com/en-gb/support/legal/cognitive-services-terms/">In doing so you agree to these terms</a>`
   }
 }
