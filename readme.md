@@ -1,4 +1,4 @@
-# Azure Cognitive APIs - Pure HTML5/JS Client
+# Azure Vision & Face Cognitive APIs - Pure HTML5/JS Client
 This is a simple demo web client app written in pure JS and HTML5 for capturing images from the device camera, sending them to Azure Cognitive Services, and processing/displaying the results
 
 It is optimized for mobile devices and browsers but can be used on a PC/Desktop browser also
@@ -22,6 +22,5 @@ The app is completely static so can be deployed almost anywhere including Azure 
 # Usage
 The app is simple and self explanatory, and is designed for both mobile and desktop use. It will open the first camera on the device, and clicking/tapping the camera icon will switch through available cameras.
 
-Clicking the video output will take a photo snapshot, which you can choose to upload and have analysed. The results will be shown as boxes around detected faces/objects etc, as well as additional details (tags, descriptions, colors, emotions, hair colour etc) shown below the photo snapshot
-
-The first time an image is captured, users will be prompted to agree to terms of use.
+It will capture images from the camera/video every 3 seconds by default (configurable in config.mjs) and analyse them. The results are drawn over the video.  
+Tapping/clicking the image will change between low & high detail modes (how much information is shown/drawn over the image)
