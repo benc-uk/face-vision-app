@@ -1,6 +1,7 @@
 import { randomColor } from './utils.mjs';
-import { canvas, canvasScale, showError, spinner } from './app.mjs';
+import { showDetail, overlay, canvasScale, showError } from './app.mjs';
 import { config } from '../config.mjs';
+var canvasCtx;
 
 //
 // Analyze an image for faces with cognitive service API
@@ -14,36 +15,31 @@ export function analyzePhotoFaceDetect(blob) {
   var apiUrl = `https://${config.FACE_API_ENDPOINT}/face/v1.0/detect?${API_OPTIONS}`
 
   fetch(apiUrl, {
-      method: 'POST',
-      headers: {
-        'Ocp-Apim-Subscription-Key': config.FACE_API_KEY,
-        'Content-Type': 'application/octet-stream'
-      },
-      body: blob
-    })
+    method: 'POST',
+    headers: {
+      'Ocp-Apim-Subscription-Key': config.FACE_API_KEY,
+      'Content-Type': 'application/octet-stream'
+    },
+    body: blob
+  })
     .then(response => {
-      if(!response.ok) {
+      if (!response.ok) {
         throw Error(response.statusText);
       }
       return response.json();
     })
     .then(data => {
-      console.dir(data); 
-      if(data.length < 1)
-        throw Error("No faces detected");
+      // Clear the canvas!
+      canvasCtx = overlay.getContext('2d');
+      canvasCtx.clearRect(0, 0, overlay.width, overlay.height);
 
-      for(let face of data) {
-        processFaceResult(face)
+      for (let face of data) {
+        processFaceResult(face);
       }
-      spinner.style.display = 'none';
     })
     .catch(err => {
       showError(err);
     })
-}
-
-function processData(data) {
-  alert(data)
 }
 
 //
@@ -51,55 +47,84 @@ function processData(data) {
 //
 function processFaceResult(face) {
   let color = randomColor({ luminosity: 'light' });
+  let faceAttr = face.faceAttributes;
 
   let hairColor = "None";
   let hairColorConfidence = 0;
-  for(let hair of face.faceAttributes.hair.hairColor) {
-    if(hair.confidence > hairColorConfidence) {
+  for (let hair of face.faceAttributes.hair.hairColor) {
+    if (hair.confidence > hairColorConfidence) {
       hairColorConfidence = hair.confidence;
       hairColor = hair.color
     }
   }
 
-  // Process results
-  let faceAttr = face.faceAttributes;
-  document.querySelector('#output').innerHTML += `
-  <h2 style="color:${color}">${faceAttr.gender} ${faceAttr.age}</h2>
-  <table style="color:${color}">
-    <tr><td>Smile:</td><td>${parseFloat(faceAttr.smile * 100).toFixed(1)+"%"}</td></tr>
-    <tr><td>Glasses:</td><td>${faceAttr.glasses.replace(/([a-z])([A-Z])/g, '$1<br>$2')}</td></tr>
-    <tr><td>Hair:</td><td>${hairColor}</td></tr>
-    <tr><td>Bald:</td><td>${parseFloat(face.faceAttributes.hair.bald * 100).toFixed(1)+"%"}</td></tr>
-    <tr><td>Beard:</td><td>${parseFloat(faceAttr.facialHair.beard * 100).toFixed(1)+"%"}</td></tr>
-    <tr><td>Moustache:</td><td>${parseFloat(faceAttr.facialHair.moustache * 100).toFixed(1)+"%"}</td></tr>
-    <tr><td>Eye Makeup:</td><td>${faceAttr.makeup.eyeMakeup}</td></tr>
-    <tr><td>Lip Makeup:</td><td>${faceAttr.makeup.lipMakeup}</td></tr>
-  </table>
-
-  <table style="color:${color}">
-    <tr><td>Neutral:</td><td>${parseFloat(faceAttr.emotion.neutral * 100).toFixed(1)+"%"}</td></tr>
-    <tr><td>Happiness:</td><td>${parseFloat(faceAttr.emotion.happiness * 100).toFixed(1)+"%"}</td></tr>
-    <tr><td>Sadness:</td><td>${parseFloat(faceAttr.emotion.sadness * 100).toFixed(1)+"%"}</td></tr>
-    <tr><td>Anger:</td><td>${parseFloat(faceAttr.emotion.anger * 100).toFixed(1)+"%"}</td></tr>
-    <tr><td>Contempt:</td><td>${parseFloat(faceAttr.emotion.contempt * 100).toFixed(1)+"%"}</td></tr>
-    <tr><td>Disgust:</td><td>${parseFloat(faceAttr.emotion.disgust * 100).toFixed(1)+"%"}</td></tr>
-    <tr><td>Fear:</td><td>${parseFloat(faceAttr.emotion.fear * 100).toFixed(1)+"%"}</td></tr>
-    <tr><td>Surprise:</td><td>${parseFloat(faceAttr.emotion.surprise * 100).toFixed(1)+"%"}</td></tr>
-  </table>`;
-
   // Face boxes
-  let canvasCtx = canvas.getContext('2d');
-
+  canvasCtx.textAlign = "start";
+  canvasCtx.textBaseline = "bottom";
   canvasCtx.strokeStyle = color;
   canvasCtx.fillStyle = color;
   canvasCtx.shadowColor = "#000000"
-  canvasCtx.shadowOffsetX = 4 * canvasScale;
-  canvasCtx.shadowOffsetY = 4 * canvasScale;
+  canvasCtx.shadowOffsetX = 3 * canvasScale;
+  canvasCtx.shadowOffsetY = 3 * canvasScale;
   canvasCtx.lineWidth = 6 * canvasScale;
   canvasCtx.beginPath();
   canvasCtx.rect(face.faceRectangle.left, face.faceRectangle.top, face.faceRectangle.width, face.faceRectangle.height);
   canvasCtx.stroke();
-  canvasCtx.font = `${40 * canvasScale}px Arial`;
+
+  // Box title
+  canvasCtx.font = `${30 * canvasScale}px Arial`;
   let offset = 10 * canvasScale;
   canvasCtx.fillText(`${faceAttr.gender} (${faceAttr.age})`, face.faceRectangle.left, face.faceRectangle.top - offset);
+
+  if(!showDetail) return;
+
+  // Face details on left 
+  canvasCtx.font = `${20 * canvasScale}px Arial`;
+  let detailsLine = 2;
+  canvasCtx.textAlign = "end";
+  if (hairColor !== 'None') {
+    canvasCtx.fillText(`${hairColor} hair`, face.faceRectangle.left - offset, face.faceRectangle.top + (offset * detailsLine));
+    detailsLine += 3;
+  }
+  if (face.faceAttributes.hair.bald > 0) {
+    canvasCtx.fillText(`${parseFloat(face.faceAttributes.hair.bald * 100).toFixed(1)}% bald`, face.faceRectangle.left - offset, face.faceRectangle.top + (offset * detailsLine));
+    detailsLine += 3;
+  }
+  if (face.faceAttributes.hair.beard > 0) {
+    canvasCtx.fillText(`${parseFloat(face.faceAttributes.facialHair.beard * 100).toFixed(1)}% beard`, face.faceRectangle.left - offset, face.faceRectangle.top + (offset * detailsLine));
+    detailsLine += 3;
+  }
+  if (faceAttr.makeup.eyeMakeup) {
+    canvasCtx.fillText(`eye makeup`, face.faceRectangle.left - offset, face.faceRectangle.top + (offset * detailsLine));
+    detailsLine += 3;
+  }
+  if (faceAttr.makeup.lipMakeup) {
+    canvasCtx.fillText(`lip makeup`, face.faceRectangle.left - offset, face.faceRectangle.top + (offset * detailsLine));
+  }
+
+  // Emotion on right
+  canvasCtx.textAlign = "start";
+  canvasCtx.fillText(`${parseFloat(faceAttr.smile * 100).toFixed(1)}% smile`, face.faceRectangle.left + face.faceRectangle.width + offset, face.faceRectangle.top + (offset * 2));
+
+  let emoLine = 5
+  let topEmoName = ''
+  let topEmoValue = 0
+  for (let emo in faceAttr.emotion) {
+    let emoValue = faceAttr.emotion[emo]
+    if (emoValue > 0.01) {
+      if (emoValue > topEmoValue) {
+        topEmoValue = emoValue
+        topEmoName = emo
+      }
+      canvasCtx.fillText(`${parseFloat(emoValue * 100).toFixed(1)}% ${emo}`, face.faceRectangle.left + face.faceRectangle.width + offset, face.faceRectangle.top + (offset * emoLine));
+      emoLine += 3
+    }
+  }
+
+  canvasCtx.shadowOffsetX = 0;
+  canvasCtx.shadowOffsetY = 0;
+  var emojiFace = new Image();
+  emojiFace.onload = () => canvasCtx.drawImage(emojiFace, face.faceRectangle.left, face.faceRectangle.top, face.faceRectangle.width, face.faceRectangle.height);
+
+  emojiFace.src = `img/emo/${topEmoName}.svg`;
 }

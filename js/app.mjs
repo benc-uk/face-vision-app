@@ -1,26 +1,26 @@
 import { analyzePhotoFaceDetect } from './results-face.mjs';
 import { analyzePhotoVision } from './results-vision.mjs';
 import { setCookie, getCookie, toggleFullScreen, videoDimensions } from './utils.mjs';
+import { config } from '../config.mjs';
 
-const VERSION = "0.4.0"
-export const main = document.querySelector('#main');
-export const output = document.querySelector('#output');
+const VERSION = "0.5.0"
 export const dialog = document.querySelector('#dialog');
-export const spinner = document.querySelector('#spinner');
-export const video = document.querySelector('video');
-export const canvas = document.querySelector('canvas');
+export const offscreen = document.querySelector('#offscreen');
+export const overlay = document.querySelector('#overlay');
 
-const butRestart = document.querySelector('#restart');
+const main = document.querySelector('#main');
+const video = document.querySelector('video');
 const butModeSel = document.querySelector('#modeselect');
 const butCamSel = document.querySelector('#camselect');
 const butFullscreen = document.querySelector('#fullscreen');
-const butCancel = document.querySelector('#cancel');
-const butAccept = document.querySelector('#accept');
 
-export var canvasScale;   // Used to scale any drawing done
-var selectedDevice = 0;   // Currently selected camera id
-var deviceIds = [];       // List of all cameras (device ids)
-var apiMode;              // Either 'face' or 'vision'
+export var canvasScale;             // Used to scale any drawing done
+export var showDetail = true        // Show more detail and face emojis
+var selectedDevice = 0;             // Currently selected camera id
+var deviceIds = [];                 // List of all cameras (device ids)
+var apiMode;                        // Either 'face' or 'vision'
+var active = true;                  // Don't process video or call API when inactive
+var vidDim = {width: 0, height: 0}; // Video size
 
 //
 // Handle resize and rotate events
@@ -87,13 +87,35 @@ function openCamera() {
     butModeSel.style.display = "block";
     butFullscreen.style.display = "block";
 
-    setInterval(captureImage, 2000)
+    setInterval(captureImageRealtime, config.REFRESH);
+    setTimeout(captureImageRealtime, 500);
     
     // Handle the screen (re)sizing
     resizeOrRotateHandler()
   })
   .catch(err => showError(err.toString() + "<br>Make sure you accept camera permissions<br><a href='javascript:location.reload()'>Try reloading page</a>"));
 }
+
+//
+// Disable capture when out of focus and not visible
+//
+document.addEventListener("visibilitychange", function() {
+  if(document.visibilityState === 'visible') {
+    active = true;
+    video.play();
+  } else {
+    active = false;
+    video.pause();
+  }
+});
+window.addEventListener("blur", function(evt) {
+  active = false;
+  video.pause();
+});
+window.addEventListener("focus", function(evt) {
+  active = true;
+  video.play();
+});
 
 //
 // Deals with landscape/portrait hassles with video object
@@ -129,83 +151,48 @@ butModeSel.addEventListener('click', evt => {
 })
 
 //
-// Button event handler: User cancels the photo, return to video mode
-//
-function cancelPhoto() {
-  video.style.display = "inline";
-  canvas.style.display = "none";
-  butAccept.style.display = "none";
-  butCancel.style.display = "none";
-  butCamSel.style.display = "block";
-  butModeSel.style.display = "block";
-  butFullscreen.style.display = "block";
-  dialog.style.display = "none";
-  spinner.style.display = 'none';
-}
-butCancel.addEventListener('click', cancelPhoto);
-
-//
-// Button event handler: Restart and take another photo
-//
-butRestart.addEventListener('click', evt => {
-  butRestart.style.display = "none";
-  output.style.display = "none";
-  cancelPhoto()
-})
-
-//
-// TButton event handler: oggle fullscreen mode
+// Toggle fullscreen mode
 //
 butFullscreen.addEventListener('click', toggleFullScreen)
 
 //
-// Take a snap of the video as a photo 
+// Toggle detail on and off
 //
-video.onclick = function() {
-  let vidDim = videoDimensions(video);
-  canvas.width = vidDim.width;
-  canvas.height = vidDim.height;
-  canvasScale = Math.max(canvas.width / 2000, 0.5);
-
-  canvas.getContext('2d').drawImage(video, 0, 0, vidDim.width, vidDim.height);
-
-  video.style.display = "none";
-  canvas.style.display = "block";
-
-  butAccept.style.display = "block";
-  butCancel.style.display = "block";
-  butCamSel.style.display = "none";
-  butModeSel.style.display = "none";
-  butFullscreen.style.display = "none";
-
-  showAgreement();
-};
+overlay.addEventListener('click', () => showDetail = !showDetail)
 
 //
-// Button event handler: user accepts the photo, analyze it with the cognitive API
+// Capture from video, draw into canvas and send to API
 //
-butAccept.addEventListener('click', evt => {
-  // Set agreement cookie
-  setCookie('termsAgreed', 'true', 3000);
+function captureImageRealtime() {
+  if(!active) return;
 
-  spinner.style.display = 'block';
+  // Handles resizing and first time loaded
+  // Sizes the video, offscreen canvas and overlay canvas
+  let newVidDim = videoDimensions(video);
+  if(newVidDim.width != vidDim.width || newVidDim.height != vidDim.height) {
+    vidDim = newVidDim
+  
+    offscreen.width = vidDim.width;
+    offscreen.height = vidDim.height;
+    canvasScale = Math.max(vidDim.width / 1500, 0.7);
+    if(window.devicePixelRatio > 1) canvasScale /= (window.devicePixelRatio/2)
+    
+    // Place overlay exactly over video
+    overlay.width = vidDim.width;
+    overlay.height = vidDim.height;
+    overlay.style.top = `${video.offsetTop}px`;
+    overlay.style.left = `${window.innerWidth/2 - vidDim.width/2}px`;
+  }
 
+  // Render the video frame to the hidden canvas
+  offscreen.getContext('2d').drawImage(video, 0, 0, vidDim.width, vidDim.height);
+  
   // Convert canvas to a blob and process with the selected API
   if(apiMode == "vision")
-    canvas.toBlob(analyzePhotoVision, "image/jpeg");
+    offscreen.toBlob(analyzePhotoVision, "image/jpeg");
   else
-    canvas.toBlob(analyzePhotoFaceDetect, "image/jpeg");
-  
-  dialog.style.display = "none";
-  butAccept.style.display = "none";
-  butCancel.style.display = "none";
-  butCamSel.style.display = "none";
-  butModeSel.style.display = "none";
-
-  butRestart.style.display = "block";
-  output.style.display = "block";
-  output.innerHTML = "";
-})
+    offscreen.toBlob(analyzePhotoFaceDetect, "image/jpeg");
+}
 
 //
 // Toggle between API modes
@@ -224,11 +211,9 @@ function setApiMode(newMode) {
 // Display error message of some kind
 //
 export function showError(err) {
-  spinner.style.display = 'none';
   dialog.style.display = "block";
   dialog.innerHTML = `<span class="error">A bad thing happened 😥 <br><br> ${err.toString()}</span>`
 }
-
 
 //
 // Display about/help only shown once at first start
@@ -239,19 +224,11 @@ function showHelp() {
   <ul>
     <li>Click the camera icon to switch between cameras</li>
     <li>The face/image button switches between cognitive APIs</li>
+    <li>Click the image to toggle detail</li>
   </ul>
-  &copy; Ben Coleman 2019<br>
+  This app will upload images from your camera to the cloud & use Azure Cognitive Services APIs to analyse the contents.<br><a href="https://azure.microsoft.com/en-gb/support/legal/cognitive-services-terms/">In doing so you agree to these terms</a>
+  <br><br>
+  &copy; Ben Coleman 2020<br>
   <a href="https://github.com/benc-uk/face-api-app">github.com/benc-uk/cognitive-demo</a> `
   setCookie('firstRun', 'false', 3000);
-}
-
-//
-// Display terms of use, legal blah, only shown on first upload
-//
-function showAgreement() {
-  // Only show if agreement cookie set true
-  if(getCookie('termsAgreed') !== "true") {
-    dialog.style.display = "block";
-    dialog.innerHTML = `Press the tick button to upload this image data to the cloud and have Azure Cognitive Services analyse the contents.<br><a href="https://azure.microsoft.com/en-gb/support/legal/cognitive-services-terms/">In doing so you agree to these terms</a>`
-  }
 }

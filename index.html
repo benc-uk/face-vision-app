@@ -22,19 +22,17 @@
   <button id="camselect"><i class="fas fa-camera fa-fw"></i></button>
   <button id="modeselect"><i class="fas fa-grin-alt fa-fw"></i></button>
   <button id="fullscreen"><i class="fas fa-expand fa-fw"></i></button>
-  <!-- <button id="accept"><i class="fas fa-check-square fa-fw"></i></button>
-  <button id="cancel"><i class="fas fa-times-circle fa-fw"></i></button>     -->
 
   <div class="center" id="main">
-    <img id="spinner" src="img/spinner.gif">
     <div id="dialog" onclick="document.querySelector('#dialog').style.display = `none`"></div>
 
     <video autoplay class=""></video>
-    
-    <canvas></canvas>
+    <canvas id="overlay"></canvas>
+
+    <canvas id="offscreen"></canvas>
   </div>
 
-  <div id="output" class="center"></div> 
+  <!-- <div id="output" class="center"></div>  -->
 
 </body>
 </html>

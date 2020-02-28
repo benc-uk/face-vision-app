@@ -62,7 +62,8 @@ video {
   padding: 0;
 }
 
-canvas { 
+
+#offscreen { 
   display: none;
   margin: 0;
   padding: 0;
@@ -70,6 +71,13 @@ canvas {
   margin-right: auto;
 }
 
+#overlay {
+  top: 0;
+  left: 0;
+  position: absolute;
+  z-index: 20;
+  background-color: rgba(255,0,0,0.3);
+}
 
 #main {
   /* background-color: #3d0055;  */
@@ -141,6 +149,13 @@ canvas {
   background-color: rgb(37, 37, 37);
   border: 3px solid rgb(27, 27, 27); 
   cursor: pointer;
+}
+/* Mobile tweaks */ 
+@media (max-width:800px) {
+  #dialog {
+    max-width: 100%;
+    width: 90%;
+  }
 }
 
 #dialog ul {
