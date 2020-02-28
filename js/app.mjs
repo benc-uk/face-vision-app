@@ -87,7 +87,7 @@ function openCamera() {
     butModeSel.style.display = "block";
     butFullscreen.style.display = "block";
 
-    setInterval(captureImageRealtime, config.REFRESH);
+    setInterval(captureImageRealtime, config.REFRESH_EVERY);
     setTimeout(captureImageRealtime, 500);
     
     // Handle the screen (re)sizing

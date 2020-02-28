@@ -62,7 +62,6 @@ video {
   padding: 0;
 }
 
-
 #offscreen { 
   display: none;
   margin: 0;
@@ -76,7 +75,7 @@ video {
   left: 0;
   position: absolute;
   z-index: 20;
-  background-color: rgba(255,0,0,0.3);
+  background-color: rgba(0,0,0,0.0);
 }
 
 #main {
