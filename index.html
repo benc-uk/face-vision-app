@@ -15,6 +15,10 @@
   <script type="module" src="./config.mjs"></script>
   <script type="module" src="./js/app.mjs"></script>
   <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/toast.css">
+
+  <!-- face-api / Tensorflow which might not be used -->
+  <script src="./js/lib/face-api.js"></script>
 </head>
 
 <body>
@@ -23,12 +27,13 @@
   <button id="modeselect"><i class="fas fa-grin-alt fa-fw"></i></button>
   <button id="fullscreen"><i class="fas fa-expand fa-fw"></i></button>
 
+  <div id="toast"></div>
+
   <div class="center" id="main">
     <div id="dialog" onclick="document.querySelector('#dialog').style.display = `none`"></div>
 
     <video autoplay class=""></video>
     <canvas id="overlay"></canvas>
-
     <canvas id="offscreen"></canvas>
   </div>
 </body>

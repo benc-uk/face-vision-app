@@ -82,3 +82,12 @@ export function videoDimensions(video) {
   };
 }
 
+//
+// Show a toast message
+//
+export function showToast(msg) {
+  var snackbar = document.getElementById("toast");
+  snackbar.innerHTML = msg;
+  snackbar.className = "show";
+  setTimeout(function(){ snackbar.className = snackbar.className.replace("show", ""); }, 3000);
+}

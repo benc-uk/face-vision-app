@@ -1,15 +1,16 @@
 import { analyzePhotoFaceDetect } from './results-face.mjs';
+import { analyzePhotoFaceDetectTF } from './results-face-tfjs.mjs';
 import { analyzePhotoVision } from './results-vision.mjs';
-import { setCookie, getCookie, toggleFullScreen, videoDimensions } from './utils.mjs';
+import { setCookie, getCookie, toggleFullScreen, videoDimensions, showToast } from './utils.mjs';
 import { config } from '../config.mjs';
 
-const VERSION = "0.5.0"
+const VERSION = "0.6.0"
 export const dialog = document.querySelector('#dialog');
 export const offscreen = document.querySelector('#offscreen');
 export const overlay = document.querySelector('#overlay');
+export const video = document.querySelector('video');
 
 const main = document.querySelector('#main');
-const video = document.querySelector('video');
 const butModeSel = document.querySelector('#modeselect');
 const butCamSel = document.querySelector('#camselect');
 const butFullscreen = document.querySelector('#fullscreen');
@@ -21,6 +22,7 @@ var deviceIds = [];                 // List of all cameras (device ids)
 var apiMode;                        // Either 'face' or 'vision'
 var active = true;                  // Don't process video or call API when inactive
 var vidDim = {width: 0, height: 0}; // Video size
+var intervalHandle                  // Id of the setInterval to refresh the view
 
 //
 // Handle resize and rotate events
@@ -30,10 +32,23 @@ window.addEventListener('resize', resizeOrRotateHandler)
 //
 // Start here! 
 //
-window.addEventListener('load', evt => {
+window.addEventListener('load', async evt => {
+
   // Set starting API mode either stored as cookie or fallback to default
   setApiMode(getCookie('mode') ? getCookie('mode') : "face");
-  
+
+  // Use face-api.js and local Tensorflow models
+  if(config.USE_TENSORFLOW) {
+    await faceapi.nets.ssdMobilenetv1.loadFromUri('/models')
+    await faceapi.nets.faceExpressionNet.loadFromUri('/models')
+    await faceapi.nets.ageGenderNet.loadFromUri('/models')
+    config.REFRESH_EVERY = 700
+    setApiMode('face')
+    butModeSel.disabled = true
+    butModeSel.style.color = '#555'
+    showToast('Please wait for Tensorflow.js to initialize')
+  }
+
   var isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
   if(isSafari) {
     // Call unconstrained getUserMedia first to get past permissions issue on Safari
@@ -58,8 +73,6 @@ function listDevices() {
     for (let deviceInfo of deviceList) {
       // Only care about cameras
       if (deviceInfo.kind === 'videoinput') {   
-        //alert(JSON.stringify(deviceInfo));  
-
         // Skip infrared camera
         if(deviceInfo.label && deviceInfo.label.toLowerCase().includes(" ir ")) continue;
         // Store id in array for later use
@@ -76,6 +89,10 @@ function listDevices() {
 // Open media stream for camera with id selectedDevice
 //
 function openCamera() {
+  if(intervalHandle) {
+    clearInterval(intervalHandle)
+  }
+  
   const constraints = {
     video: { deviceId: {exact: deviceIds[selectedDevice]} }
   };
@@ -87,8 +104,10 @@ function openCamera() {
     butModeSel.style.display = "block";
     butFullscreen.style.display = "block";
 
-    setInterval(captureImageRealtime, config.REFRESH_EVERY);
-    setTimeout(captureImageRealtime, 500);
+    if(config.REFRESH_EVERY > 0) {
+      intervalHandle = setInterval(captureImage, config.REFRESH_EVERY);
+      setTimeout(captureImage, 500);
+    }
     
     // Handle the screen (re)sizing
     resizeOrRotateHandler()
@@ -103,6 +122,7 @@ document.addEventListener("visibilitychange", function() {
   if(document.visibilityState === 'visible') {
     active = true;
     video.play();
+    showToast(`Resuming image capture`)
   } else {
     active = false;
     video.pause();
@@ -115,6 +135,7 @@ window.addEventListener("blur", function(evt) {
 window.addEventListener("focus", function(evt) {
   active = true;
   video.play();
+  showToast(`Resuming image capture`)
 });
 
 //
@@ -139,6 +160,7 @@ function resizeOrRotateHandler() {
 //
 butCamSel.addEventListener('click', evt => {
   selectedDevice = ++selectedDevice % deviceIds.length; 
+  showToast(`Changing to camera device: ${selectedDevice}`)
   setCookie('selectedDevice', selectedDevice, 3000);
   openCamera();
 })
@@ -148,22 +170,33 @@ butCamSel.addEventListener('click', evt => {
 //
 butModeSel.addEventListener('click', evt => {
   setApiMode(apiMode == 'face' ? 'vision' : 'face')
+  showToast(`Detection mode is now: ${apiMode}`)
+  captureImage()
 })
 
 //
 // Toggle fullscreen mode
 //
-butFullscreen.addEventListener('click', toggleFullScreen)
+butFullscreen.addEventListener('click', () => {
+  showToast(`Switching to/from fullscreen`)
+  toggleFullScreen()
+})
 
 //
 // Toggle detail on and off
 //
-overlay.addEventListener('click', () => showDetail = !showDetail)
+// overlay.addEventListener('click', () => {
+//   showDetail = !showDetail
+//   showToast(`Extra detail & emoji ${showDetail==true?'enabled':'disabled'}`)
+// })
+
+video.addEventListener('click', captureImage)
+overlay.addEventListener('click', captureImage)
 
 //
 // Capture from video, draw into canvas and send to API
 //
-function captureImageRealtime() {
+function captureImage() {
   if(!active) return;
 
   // Handles resizing and first time loaded
@@ -176,7 +209,7 @@ function captureImageRealtime() {
     offscreen.height = vidDim.height;
     canvasScale = Math.max(vidDim.width / 1500, 0.7);
     if(window.devicePixelRatio > 1) canvasScale /= (window.devicePixelRatio/2)
-    
+
     // Place overlay exactly over video
     overlay.width = vidDim.width;
     overlay.height = vidDim.height;
@@ -190,8 +223,12 @@ function captureImageRealtime() {
   // Convert canvas to a blob and process with the selected API
   if(apiMode == "vision")
     offscreen.toBlob(analyzePhotoVision, "image/jpeg");
-  else
-    offscreen.toBlob(analyzePhotoFaceDetect, "image/jpeg");
+  else {
+    if(config.USE_TENSORFLOW)
+      analyzePhotoFaceDetectTF(video)
+    else
+      offscreen.toBlob(analyzePhotoFaceDetect, "image/jpeg");
+  }
 }
 
 //

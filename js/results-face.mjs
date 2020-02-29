@@ -1,17 +1,14 @@
 import { randomColor } from './utils.mjs';
 import { showDetail, overlay, canvasScale, showError } from './app.mjs';
 import { config } from '../config.mjs';
-var canvasCtx;
+
+const API_OPTIONS = 'returnFaceAttributes=age,gender,smile,facialHair,glasses,emotion,hair,makeup'
 
 //
 // Analyze an image for faces with cognitive service API
 // Image is passed as a blob from app.js
 //
-
-const API_OPTIONS = 'returnFaceAttributes=age,gender,smile,facialHair,glasses,emotion,hair,makeup'
-
 export function analyzePhotoFaceDetect(blob) {
-
   var apiUrl = `https://${config.FACE_API_ENDPOINT}/face/v1.0/detect?${API_OPTIONS}`
 
   fetch(apiUrl, {
@@ -22,30 +19,30 @@ export function analyzePhotoFaceDetect(blob) {
     },
     body: blob
   })
-    .then(response => {
-      if (!response.ok) {
-        throw Error(response.statusText);
-      }
-      return response.json();
-    })
-    .then(data => {
-      // Clear the canvas!
-      canvasCtx = overlay.getContext('2d');
-      canvasCtx.clearRect(0, 0, overlay.width, overlay.height);
+  .then(response => {
+    if (!response.ok) {
+      throw Error(response.statusText);
+    }
+    return response.json();
+  })
+  .then(data => {
+    // Fetch the canvas and clear it 
+    let canvasCtx = overlay.getContext('2d');
+    canvasCtx.clearRect(0, 0, overlay.width, overlay.height);
 
-      for (let face of data) {
-        processFaceResult(face);
-      }
-    })
-    .catch(err => {
-      showError(err);
-    })
+    for (let face of data) {
+      processFaceResult(face, canvasCtx);
+    }
+  })
+  .catch(err => {
+    showError(err);
+  })
 }
 
 //
 // Display face information with table of details and box around the face
 //
-function processFaceResult(face) {
+function processFaceResult(face, canvasCtx) {
   let color = randomColor({ luminosity: 'light' });
   let faceAttr = face.faceAttributes;
 
