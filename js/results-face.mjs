@@ -8,7 +8,7 @@ const API_OPTIONS = 'returnFaceAttributes=age,gender,smile,facialHair,glasses,em
 // Analyze an image for faces with cognitive service API
 // Image is passed as a blob from app.js
 //
-export function analyzePhotoFaceDetect(blob) {
+export function analyzePhotoFace(blob) {
   var apiUrl = `https://${config.FACE_API_ENDPOINT}/face/v1.0/detect?${API_OPTIONS}`
 
   fetch(apiUrl, {

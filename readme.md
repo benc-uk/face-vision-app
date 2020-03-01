@@ -24,3 +24,6 @@ The app is simple and self explanatory, and is designed for both mobile and desk
 
 It will capture images from the camera/video every 3 seconds by default (configurable in config.mjs) and analyse them. The results are drawn over the video.  
 Tapping/clicking the image will change between low & high detail modes (how much information is shown/drawn over the image)
+
+
+# Tensorflow.js and Face-API.js Mode

@@ -1,14 +1,20 @@
-import { randomColor } from './utils.mjs';
+import { randomColor, showToast } from './utils.mjs';
 import { overlay, canvasScale, showError, video } from './app.mjs';
+var firstDetection = true
 
 //
+// Analyze an image for faces with face-api.js
+// Image is fetched directly from the video element 
 //
-//
-export async function analyzePhotoFaceDetectTF() {
+export async function analyzePhotoFaceTensorflow() {
   try {
+    if(firstDetection) {
+      showToast(`Please wait, first detection can take several seconds`)
+    }
     var detections = await faceapi.detectAllFaces(video).withFaceExpressions().withAgeAndGender()
     detections = faceapi.resizeResults(detections, {width: overlay.width, height: overlay.height})
-    
+    firstDetection = false
+
     // Fetch the canvas and clear it 
     let canvasCtx = overlay.getContext('2d');
     canvasCtx.clearRect(0, 0, overlay.width, overlay.height);
@@ -47,7 +53,7 @@ function processFaceResult(face, canvasCtx) {
   canvasCtx.fillText(`${face.gender} (${Math.floor(face.age)})`, face.detection.box.left, face.detection.box.top - offset);
 
   canvasCtx.textAlign = "start";
-
+  canvasCtx.font = `${20 * canvasScale}px Arial`;
   let emoLine = 5
   let topEmoName = ''
   let topEmoValue = 0
@@ -66,7 +72,10 @@ function processFaceResult(face, canvasCtx) {
   canvasCtx.shadowOffsetX = 0;
   canvasCtx.shadowOffsetY = 0;
   var emojiFace = new Image();
-  emojiFace.onload = () => canvasCtx.drawImage(emojiFace, face.detection.box.left, face.detection.box.top, face.detection.box.width, face.detection.box.height);
+
+  // Assume faces are more high than wide (portrait) 
+  offset = (face.detection.box.height - face.detection.box.width) / 2
+  emojiFace.onload = () => canvasCtx.drawImage(emojiFace, face.detection.box.left, face.detection.box.top+offset, face.detection.box.width, face.detection.box.width);
 
   emojiFace.src = `img/emo/${topEmoName}.svg`;
 }
