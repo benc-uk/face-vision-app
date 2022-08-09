@@ -11,7 +11,9 @@ The app has three modes:
 
 The two Azure modes are optional and are disabled by default
 
-## Live demo
+![screen shot of the app](https://user-images.githubusercontent.com/14982936/183762018-0f76de0d-1517-4b10-934a-df20dcec507a.png)
+
+## Live Demo
 
 [Live demo hosted on GitHub pages here](https://code.benco.io/face-vision-app/)
 

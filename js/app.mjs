@@ -3,9 +3,7 @@ import { analyzePhotoFaceTensorflow } from './results-face-tf.mjs'
 import { analyzePhotoVision } from './results-vision.mjs'
 import { setCookie, getCookie, toggleFullScreen, videoDimensions, showToast } from './utils.mjs'
 
-//import { config } from '../config.mjs'
-
-const VERSION = '0.7.0'
+const VERSION = '0.7.1'
 export const dialog = document.querySelector('#dialog')
 export const offscreen = document.querySelector('#offscreen')
 export const overlay = document.querySelector('#overlay')
@@ -68,14 +66,11 @@ window.addEventListener('load', async (evt) => {
   const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent)
   if (isSafari) {
     // Call unconstrained getUserMedia first to get past permissions issue on Safari
+    // Safari is the worst browser ever created
     await navigator.mediaDevices.getUserMedia({ audio: false, video: true })
     listDevices()
   } else {
     listDevices()
-  }
-
-  if (getCookie('firstRun') !== 'false') {
-    showHelp()
   }
 })
 
@@ -90,9 +85,10 @@ async function listDevices() {
 
     for (let deviceInfo of deviceList) {
       // Only care about cameras
-      if (deviceInfo.kind === 'videoinput') {
+      if (deviceInfo.kind === 'videoinput' && deviceInfo.deviceId) {
         // Skip infrared camera
         if (deviceInfo.label && deviceInfo.label.toLowerCase().includes(' ir ')) continue
+
         // Store id in array for later use
         deviceIds.push(deviceInfo.deviceId)
         console.log('Found camera:', deviceInfo.label)
@@ -100,7 +96,8 @@ async function listDevices() {
     }
     selectedDevice = getCookie('selectedDevice') ? getCookie('selectedDevice') : 0
 
-    // Now we have selected device, open it
+    // Now we have selected a device, try open it
+    // On first run, we will get a permissions issue
     openCamera()
   } catch (err) {
     showError(err)
@@ -116,10 +113,29 @@ async function openCamera() {
   }
 
   try {
+    const cameraPerms = await navigator.permissions.query({ name: 'camera' })
+    cameraPerms.onchange = () => {
+      if (cameraPerms.state === 'granted') {
+        console.log('Camera permission granted, reloading page!')
+        window.location.reload()
+      }
+    }
+
+    let constraint = { video: {} }
+
+    // Pick constraints if deviceIds array is populated
+    if (deviceIds.length > 0) {
+      constraint = {
+        video: { deviceId: { exact: deviceIds[selectedDevice] } },
+      }
+    } else {
+      showError(`<h3>No Camera</h3><p>No cameras were detected, or permission has not been granted</p>`)
+    }
+
+    console.log(`Opening camera with constraint: ${JSON.stringify(constraint)}`)
+
     // Get the camera stream
-    const stream = await navigator.mediaDevices.getUserMedia({
-      video: { deviceId: { exact: deviceIds[selectedDevice] } },
-    })
+    const stream = await navigator.mediaDevices.getUserMedia(constraint)
 
     // Display the video, by attaching the stream to the video element
     video.srcObject = stream
@@ -138,6 +154,11 @@ async function openCamera() {
 
     // Handle the screen (re)sizing
     resizeOrRotateHandler()
+
+    // Show help test on first run
+    if (getCookie('firstRun') !== 'false') {
+      showHelp()
+    }
   } catch (err) {
     showError(
       `${err.toString()} <br>
@@ -219,14 +240,18 @@ butModeSel.addEventListener('click', (evt) => {
     if (intervalHandle) {
       clearInterval(intervalHandle)
     }
-    intervalHandle = setInterval(captureImage, config.AZURE_REFRESH_RATE)
+    if (config.AZURE_REFRESH_RATE > 0) {
+      intervalHandle = setInterval(captureImage, config.AZURE_REFRESH_RATE)
+    }
   }
 
   if (apiMode == 'face-tf') {
     if (intervalHandle) {
       clearInterval(intervalHandle)
     }
-    intervalHandle = setInterval(captureImage, config.TF_REFRESH_RATE)
+    if (config.AZURE_REFRESH_RATE > 0) {
+      intervalHandle = setInterval(captureImage, config.TF_REFRESH_RATE)
+    }
   }
 
   captureImage()
@@ -338,12 +363,14 @@ function showHelp() {
   dialog.style.display = 'block'
   dialog.innerHTML = `<b>Azure Cognitive Services Demo v${VERSION}</b><br>
   <ul>
-    <li>Click the camera icon to switch between cameras</li>
-    <li>The face/image button switches between recognition modes</li>
+    <li>The camera icon to switch between cameras</li>
+    <li>The second icon switches between recognition modes</li>
+    <li>The third icon toggles fullscreen</li>
+    <li>The fourth icon switches emoji overlay on/off</li>
   </ul>
-  This app will send images from your camera to the cloud & use Azure Cognitive Services APIs to analyse the contents.<br><a href="https://azure.microsoft.com/en-gb/support/legal/cognitive-services-terms/">In doing so you agree to these terms</a>
+  This app may send data to the cloud & Azure APIs for analysis<br>the contents. In doing so you agree to <a href="https://azure.microsoft.com/en-gb/support/legal/cognitive-services-terms/">these terms</a>
   <br><br>
-  &copy; Ben Coleman 2020<br>
-  <a href="https://github.com/benc-uk/face-api-app">github.com/benc-uk/cognitive-demo</a> `
+  &copy; Ben Coleman 2020~2022<br>
+  <a href="https://github.com/benc-uk/face-vision-app">github.com/benc-uk/face-vision-app</a> `
   setCookie('firstRun', 'false', 3000)
 }
