@@ -3,9 +3,9 @@ import { analyzePhotoFaceTensorflow } from './results-face-tf.mjs'
 import { analyzePhotoVision } from './results-vision.mjs'
 import { setCookie, getCookie, toggleFullScreen, videoDimensions, showToast } from './utils.mjs'
 
-import { config } from '../config.mjs'
+//import { config } from '../config.mjs'
 
-const VERSION = '0.6.0'
+const VERSION = '0.7.0'
 export const dialog = document.querySelector('#dialog')
 export const offscreen = document.querySelector('#offscreen')
 export const overlay = document.querySelector('#overlay')
@@ -27,6 +27,9 @@ let vidDim = { width: 0, height: 0 } // Video size
 let intervalHandle // Id of the setInterval to refresh the view
 export let showEmoji = false
 
+// Dynamically loaded with fetch
+export let config
+
 //
 // Handle resize and rotate events
 //
@@ -36,7 +39,23 @@ window.addEventListener('resize', resizeOrRotateHandler)
 // Start here!
 //
 window.addEventListener('load', async (evt) => {
-  console.log(config)
+  const resp = await fetch('/config.json')
+  if (!resp.ok) {
+    // Fall back to default config
+    config = {
+      AZURE_REFRESH_RATE: 3000,
+      TF_REFRESH_RATE: 500,
+    }
+  } else {
+    try {
+      config = await resp.json()
+    } catch (err) {
+      document.body.innerHTML = `<h1>Config Error</h1><p>${err.toString()}</p>`
+      return
+    }
+  }
+
+  console.log('Config:', config)
 
   // Set starting API mode either stored as cookie or fallback to default
   setApiMode(getCookie('mode') ? getCookie('mode') : 'face-tf')
@@ -65,6 +84,7 @@ window.addEventListener('load', async (evt) => {
 //
 async function listDevices() {
   try {
+    deviceIds = []
     // Now list all devices
     const deviceList = await navigator.mediaDevices.enumerateDevices()
 
@@ -75,6 +95,7 @@ async function listDevices() {
         if (deviceInfo.label && deviceInfo.label.toLowerCase().includes(' ir ')) continue
         // Store id in array for later use
         deviceIds.push(deviceInfo.deviceId)
+        console.log('Found camera:', deviceInfo.label)
       }
     }
     selectedDevice = getCookie('selectedDevice') ? getCookie('selectedDevice') : 0
@@ -94,13 +115,11 @@ async function openCamera() {
     clearInterval(intervalHandle)
   }
 
-  let constraints = {
-    video: { deviceId: selectedDevice },
-  }
-
   try {
     // Get the camera stream
-    const stream = await navigator.mediaDevices.getUserMedia(constraints)
+    const stream = await navigator.mediaDevices.getUserMedia({
+      video: { deviceId: { exact: deviceIds[selectedDevice] } },
+    })
 
     // Display the video, by attaching the stream to the video element
     video.srcObject = stream
@@ -190,8 +209,8 @@ butCamSel.addEventListener('click', (evt) => {
 //
 butModeSel.addEventListener('click', (evt) => {
   let modeList = ['face-tf']
-  if (config.FACE_API_ENDPOINT !== '') modeList.push('face-az')
-  if (config.VISION_API_ENDPOINT !== '') modeList.push('vision')
+  if (config.FACE_API_ENDPOINT) modeList.push('face-az')
+  if (config.VISION_API_ENDPOINT) modeList.push('vision')
 
   let modeIndex = modeList.findIndex((e) => e === apiMode)
   setApiMode(modeList[(modeIndex + 1) % modeList.length])

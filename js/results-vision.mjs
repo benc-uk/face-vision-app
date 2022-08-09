@@ -1,17 +1,16 @@
 import { randomColor } from './utils.mjs'
 import { showDetail, overlay, canvasScale, showError } from './app.mjs'
-import { config } from '../config.mjs'
+import { config } from './app.mjs'
 let canvasCtx
+
+const API_OPTIONS = 'visualFeatures=Objects,Description,Faces,Tags,Brands,Categories,Color'
 
 //
 // Analyze an image for content with cognitive service API
 // Image is passed as a blob from app.js
 //
-
-const API_OPTIONS = 'visualFeatures=Objects,Description,Faces,Tags,Brands,Categories,Color'
-
 export async function analyzePhotoVision(blob) {
-  const apiUrl = `https://${config.VISION_API_ENDPOINT}/vision/v3.2/analyze?${API_OPTIONS}`
+  const apiUrl = `${config.VISION_API_ENDPOINT}/vision/v3.2/analyze?${API_OPTIONS}`
 
   try {
     const resp = await fetch(apiUrl, {

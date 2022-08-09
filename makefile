@@ -1,6 +1,5 @@
 # Common variables
-VERSION := 0.0.1
-BUILD_INFO := Manual build 
+VERSION := 0.7.0
 
 # Things you don't want to change
 REPO_DIR := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))
@@ -30,4 +29,5 @@ lint-fix: ## 🔍 Lint & format, will try to fix errors and modify code
 
 serve: ## 🌐 Start a local HTTP server for development
 	@figlet $@ || true
-	@$(SERVER_PATH) -c-1
+	@echo "🌐 Starting local HTTP server on http://localhost:8080/"
+	@$(SERVER_PATH) -c-1 -s -o

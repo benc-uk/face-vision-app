@@ -1,6 +1,6 @@
 import { randomColor } from './utils.mjs'
 import { showDetail, overlay, canvasScale, showError, showEmoji } from './app.mjs'
-import { config } from '../config.mjs'
+import { config } from './app.mjs'
 
 const API_OPTIONS = 'returnFaceAttributes=age,gender,smile,facialHair,glasses,emotion,hair,makeup'
 
@@ -9,7 +9,7 @@ const API_OPTIONS = 'returnFaceAttributes=age,gender,smile,facialHair,glasses,em
 // Image is passed as a blob from app.js
 //
 export async function analyzePhotoFace(blob) {
-  const apiUrl = `https://${config.FACE_API_ENDPOINT}/face/v1.0/detect?${API_OPTIONS}`
+  const apiUrl = `${config.FACE_API_ENDPOINT}/face/v1.0/detect?${API_OPTIONS}`
 
   try {
     const resp = await fetch(apiUrl, {
