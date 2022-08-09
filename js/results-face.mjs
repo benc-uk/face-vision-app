@@ -8,35 +8,37 @@ const API_OPTIONS = 'returnFaceAttributes=age,gender,smile,facialHair,glasses,em
 // Analyze an image for faces with cognitive service API
 // Image is passed as a blob from app.js
 //
-export function analyzePhotoFace(blob) {
+export async function analyzePhotoFace(blob) {
   const apiUrl = `https://${config.FACE_API_ENDPOINT}/face/v1.0/detect?${API_OPTIONS}`
 
-  fetch(apiUrl, {
-    method: 'POST',
-    headers: {
-      'Ocp-Apim-Subscription-Key': config.FACE_API_KEY,
-      'Content-Type': 'application/octet-stream',
-    },
-    body: blob,
-  })
-    .then((response) => {
-      if (!response.ok) {
-        throw Error(response.statusText)
-      }
-      return response.json()
+  try {
+    const resp = await fetch(apiUrl, {
+      method: 'POST',
+      headers: {
+        'Ocp-Apim-Subscription-Key': config.FACE_API_KEY,
+        'Content-Type': 'application/octet-stream',
+      },
+      body: blob,
     })
-    .then((data) => {
+
+    if (!resp.ok) {
+      throw new Error(`API error ${resp.status} ${resp.statusText}`)
+    }
+
+    const data = await resp.json()
+    if (data) {
       // Fetch the canvas and clear it
       let canvasCtx = overlay.getContext('2d')
       canvasCtx.clearRect(0, 0, overlay.width, overlay.height)
 
+      // Process each face
       for (let face of data) {
         processFaceResult(face, canvasCtx)
       }
-    })
-    .catch((err) => {
-      showError(err)
-    })
+    }
+  } catch (err) {
+    showError(err)
+  }
 }
 
 //

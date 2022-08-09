@@ -49,7 +49,8 @@ window.addEventListener('load', async (evt) => {
   const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent)
   if (isSafari) {
     // Call unconstrained getUserMedia first to get past permissions issue on Safari
-    navigator.mediaDevices.getUserMedia({ audio: false, video: true }).then(listDevices)
+    await navigator.mediaDevices.getUserMedia({ audio: false, video: true })
+    listDevices()
   } else {
     listDevices()
   }
@@ -62,24 +63,27 @@ window.addEventListener('load', async (evt) => {
 //
 // Call mediaDevices.enumerateDevices and populate deviceIds array and selectedDevice
 //
-function listDevices() {
-  // Now list all devices
-  navigator.mediaDevices
-    .enumerateDevices()
-    .then((deviceList) => {
-      for (let deviceInfo of deviceList) {
-        // Only care about cameras
-        if (deviceInfo.kind === 'videoinput') {
-          // Skip infrared camera
-          if (deviceInfo.label && deviceInfo.label.toLowerCase().includes(' ir ')) continue
-          // Store id in array for later use
-          deviceIds.push(deviceInfo.deviceId)
-        }
+async function listDevices() {
+  try {
+    // Now list all devices
+    const deviceList = await navigator.mediaDevices.enumerateDevices()
+
+    for (let deviceInfo of deviceList) {
+      // Only care about cameras
+      if (deviceInfo.kind === 'videoinput') {
+        // Skip infrared camera
+        if (deviceInfo.label && deviceInfo.label.toLowerCase().includes(' ir ')) continue
+        // Store id in array for later use
+        deviceIds.push(deviceInfo.deviceId)
       }
-      selectedDevice = getCookie('selectedDevice') ? getCookie('selectedDevice') : 0
-    })
-    .then(openCamera)
-    .catch((err) => showError(err))
+    }
+    selectedDevice = getCookie('selectedDevice') ? getCookie('selectedDevice') : 0
+
+    // Now we have selected device, open it
+    openCamera()
+  } catch (err) {
+    showError(err)
+  }
 }
 
 //
