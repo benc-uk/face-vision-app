@@ -8,11 +8,10 @@ let canvasCtx
 // Image is passed as a blob from app.js
 //
 
-const API_OPTIONS =
-  'visualFeatures=Color,Brands,Categories,Faces,Tags,Description,Objects&details=Celebrities,Landmarks'
+const API_OPTIONS = 'visualFeatures=Objects,Description,Faces,Tags,Brands,Categories,Color'
 
 export function analyzePhotoVision(blob) {
-  const apiUrl = `https://${config.VISION_API_ENDPOINT}/vision/v2.1/analyze?${API_OPTIONS}`
+  const apiUrl = `https://${config.VISION_API_ENDPOINT}/vision/v3.2/analyze?${API_OPTIONS}`
   fetch(apiUrl, {
     method: 'POST',
     headers: {
@@ -28,7 +27,6 @@ export function analyzePhotoVision(blob) {
       return response.json()
     })
     .then((data) => {
-      //console.dir(data)
       // Clear the canvas!
       canvasCtx = overlay.getContext('2d')
       canvasCtx.clearRect(0, 0, overlay.width, overlay.height)
@@ -45,11 +43,11 @@ export function analyzePhotoVision(blob) {
         canvasCtx.fillText(data.description.captions[0].text, 10, fs)
       }
 
-      // Find & draw faces (age and gender)
+      // Find & draw faces (age and gender we're removed for some reason)
       if (data.faces) {
         for (let face of data.faces) {
           let r = face.faceRectangle
-          visionItemBox(r.left, r.top, r.width, r.height, `${face.gender} (${face.age})`)
+          visionItemBox(r.left, r.top, r.width, r.height, `Face 🙂`)
         }
       }
 
@@ -92,6 +90,7 @@ export function analyzePhotoVision(blob) {
         let fs = 30 * canvasScale
         canvasCtx.textAlign = 'end'
         for (let t = 0; t <= 7; t++) {
+          if (!data.description.tags[t]) break
           canvasCtx.fillStyle = '#fff'
           canvasCtx.font = `${30 * canvasScale}px Arial`
           canvasCtx.fillText(data.description.tags[t], overlay.width - 10, (t + 2) * (fs * 2.2) * canvasScale)
@@ -108,22 +107,6 @@ export function analyzePhotoVision(blob) {
           canvasCtx.fillText(data.color.dominantColors[c], overlay.width - 10, (c + 14) * (fs * 2.2) * canvasScale)
         }
       }
-
-      /*
-      // Categories hold some info and celebrities if they are detected
-      if(data.categories) {
-        for(let cat of data.categories) {
-          table.innerHTML += `<tr><td>Category:</td><td>${cat.name} ${parseFloat(cat.score * 100).toFixed(1)+"%"}</td></tr>`
-          // Special case for celebrities in people_ cat
-          if(cat.name == 'people_') {
-            if(cat.detail && cat.detail.celebrities) {
-              for(let celeb of cat.detail.celebrities) {
-                table.innerHTML += `<tr><td>Celebrity:</td><td>${celeb.name} ${parseFloat(celeb.confidence * 100).toFixed(1)+"%"}</td></tr>`
-              }
-            }
-          }
-        }
-      }*/
     })
     .catch((err) => {
       showError(err)
@@ -144,7 +127,7 @@ function visionItemBox(left, top, width, height, label) {
   canvasCtx.stroke()
   canvasCtx.font = `${40 * canvasScale}px Arial`
   const offset = 10 * canvasScale
-  const labelY = top - offset
+  let labelY = top - offset
   if (top < 30) {
     labelY = top + height + offset * 3
   }

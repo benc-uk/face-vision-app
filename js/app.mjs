@@ -85,7 +85,7 @@ function listDevices() {
 //
 // Open media stream for camera with id selectedDevice
 //
-function openCamera() {
+async function openCamera() {
   if (intervalHandle) {
     clearInterval(intervalHandle)
   }
@@ -94,31 +94,34 @@ function openCamera() {
     video: { deviceId: selectedDevice },
   }
 
-  navigator.mediaDevices
-    .getUserMedia(constraints)
-    .then((stream) => {
-      // Display the video
-      video.srcObject = stream
-      butCamSel.style.display = 'block'
-      butModeSel.style.display = 'block'
-      butFullscreen.style.display = 'block'
-      butEmoji.style.display = 'block'
+  try {
+    // Get the camera stream
+    const stream = await navigator.mediaDevices.getUserMedia(constraints)
 
-      if (apiMode == 'face-tf') {
-        intervalHandle = setInterval(captureImage, config.TF_REFRESH_RATE)
-      } else {
-        intervalHandle = setInterval(captureImage, config.AZURE_REFRESH_RATE)
-      }
+    // Display the video, by attaching the stream to the video element
+    video.srcObject = stream
 
-      // Handle the screen (re)sizing
-      resizeOrRotateHandler()
-    })
-    .catch((err) =>
-      showError(
-        `${err.toString()}<br>Make sure you accept camera permissions
-          <br><a href='javascript:location.reload()'>Try reloading page</a>`
-      )
+    butCamSel.style.display = 'block'
+    butModeSel.style.display = 'block'
+    butFullscreen.style.display = 'block'
+    butEmoji.style.display = 'block'
+
+    // Set up timers for capturing frames and processing them
+    if (apiMode == 'face-tf') {
+      intervalHandle = setInterval(captureImage, config.TF_REFRESH_RATE)
+    } else {
+      intervalHandle = setInterval(captureImage, config.AZURE_REFRESH_RATE)
+    }
+
+    // Handle the screen (re)sizing
+    resizeOrRotateHandler()
+  } catch (err) {
+    showError(
+      `${err.toString()} <br>
+      Make sure you accept camera permissions <br>
+      <a href='javascript:location.reload()'>Try reloading page</a>`
     )
+  }
 }
 
 video.addEventListener('playing', (evt) => {
@@ -132,20 +135,23 @@ document.addEventListener('visibilitychange', (evt) => {
   if (document.visibilityState === 'visible') {
     active = true
     video.play()
-    showToast(`Resuming image capture`)
+    showToast(`📷 Resuming image capture`)
   } else {
     active = false
     video.pause()
   }
 })
+
 window.addEventListener('blur', (evt) => {
   active = false
+  showToast(`💤 Pausing image capture`)
   video.pause()
 })
+
 window.addEventListener('focus', (evt) => {
   active = true
   video.play()
-  showToast(`Resuming image capture`)
+  showToast(`📷 Resuming image capture`)
 })
 
 //
@@ -170,7 +176,7 @@ function resizeOrRotateHandler() {
 //
 butCamSel.addEventListener('click', (evt) => {
   selectedDevice = ++selectedDevice % deviceIds.length
-  showToast(`Changing to camera device: ${selectedDevice}`)
+  showToast(`📽️ Changing to camera device: ${selectedDevice}`)
   setCookie('selectedDevice', selectedDevice, 3000)
   openCamera()
 })
@@ -182,6 +188,7 @@ butModeSel.addEventListener('click', (evt) => {
   let modeList = ['face-tf']
   if (config.FACE_API_ENDPOINT !== '') modeList.push('face-az')
   if (config.VISION_API_ENDPOINT !== '') modeList.push('vision')
+
   let modeIndex = modeList.findIndex((e) => e === apiMode)
   setApiMode(modeList[(modeIndex + 1) % modeList.length])
 
@@ -191,6 +198,7 @@ butModeSel.addEventListener('click', (evt) => {
     }
     intervalHandle = setInterval(captureImage, config.AZURE_REFRESH_RATE)
   }
+
   if (apiMode == 'face-tf') {
     if (intervalHandle) {
       clearInterval(intervalHandle)
@@ -205,7 +213,7 @@ butModeSel.addEventListener('click', (evt) => {
 // Toggle fullscreen mode
 //
 butFullscreen.addEventListener('click', () => {
-  showToast(`Switching to/from fullscreen`)
+  showToast(`📺 Switching to/from fullscreen`)
   toggleFullScreen()
 })
 
@@ -214,7 +222,7 @@ butFullscreen.addEventListener('click', () => {
 //
 butEmoji.addEventListener('click', () => {
   showEmoji = !showEmoji
-  showToast(`${showEmoji ? 'Enabled' : 'Disabled'} emoji overlay`)
+  showToast(`${showEmoji ? '👍 Enabled' : '👎 Disabled'} emoji overlay`)
   if (showEmoji) {
     butEmoji.firstChild.classList.remove('far')
     butEmoji.firstChild.classList.add('fas')
@@ -275,16 +283,19 @@ function captureImage() {
 function setApiMode(newMode) {
   apiMode = newMode
   if (apiMode == 'vision') {
-    showToast(`Using image recognition with Azure Vision API`)
+    showToast(`🖼️ Using image recognition with Azure Vision API`)
     butModeSel.innerHTML = '<i class="fas fa-image fa-fw"></i>'
+    butEmoji.style.visibility = 'hidden'
   }
   if (apiMode == 'face-tf') {
-    showToast(`Using face recognition with local Tensorflow models`)
-    butModeSel.innerHTML = '<i class="fa fa-grin-alt fa-fw"></i>'
+    showToast(`😃 Using face recognition with local Tensorflow models`)
+    butModeSel.innerHTML = '<i class="fas fa-project-diagram fa-fw"></i>'
+    butEmoji.style.visibility = 'visible'
   }
   if (apiMode == 'face-az') {
-    showToast(`Using face recognition with Azure Face API`)
-    butModeSel.innerHTML = '<i class="far fa-grin-alt fa-fw"></i>'
+    showToast(`🙃 Using face recognition with Azure Face API`)
+    butModeSel.innerHTML = '<i class="fas fa-cloud fa-fw"></i>'
+    butEmoji.style.visibility = 'visible'
   }
   setCookie('mode', apiMode, 3000)
 }
