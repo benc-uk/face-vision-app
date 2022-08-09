@@ -61,9 +61,9 @@ window.addEventListener('load', async (evt) => {
   setApiMode(getCookie('mode') ? getCookie('mode') : 'face-tf')
 
   //await faceapi.nets.tinyFaceDetector.loadFromUri("/models");
-  await faceapi.nets.ssdMobilenetv1.loadFromUri('/models')
-  await faceapi.nets.faceExpressionNet.loadFromUri('/models')
-  await faceapi.nets.ageGenderNet.loadFromUri('/models')
+  await faceapi.nets.ssdMobilenetv1.loadFromUri('models')
+  await faceapi.nets.faceExpressionNet.loadFromUri('models')
+  await faceapi.nets.ageGenderNet.loadFromUri('models')
 
   const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent)
   if (isSafari) {
