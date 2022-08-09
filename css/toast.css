@@ -3,7 +3,7 @@
   visibility: hidden; /* Hidden by default. Visible on click */
   min-width: 250px; /* Set a default minimum width */
   margin-left: -125px; /* Divide value of min-width by 2 */
-  background-color: rgb(37, 37, 37);; /* Black background color */
+  background-color: rgb(37, 37, 37); /* Black background color */
   color: #fff; /* White text color */
   text-align: center; /* Centered text */
   border-radius: 3px; /* Rounded borders */
@@ -15,8 +15,9 @@
   box-shadow: 0px 5px 10px 5px rgba(0, 0, 0, 0.6);
   font-size: 120%;
 }
-/* Mobile tweaks */ 
-@media (max-width:800px) {
+
+/* Mobile tweaks */
+@media (max-width: 800px) {
   #toast {
     font-size: 100%;
   }
@@ -33,21 +34,45 @@
 
 /* Animations to fade the snackbar in and out */
 @-webkit-keyframes fadein {
-  from {top: 0; opacity: 0;}
-  to {top: 30px; opacity: 1;}
+  from {
+    top: 0;
+    opacity: 0;
+  }
+  to {
+    top: 30px;
+    opacity: 1;
+  }
 }
 
 @keyframes fadein {
-  from {top: 0; opacity: 0;}
-  to {top: 30px; opacity: 1;}
+  from {
+    top: 0;
+    opacity: 0;
+  }
+  to {
+    top: 30px;
+    opacity: 1;
+  }
 }
 
 @-webkit-keyframes fadeout {
-  from {top: 30px; opacity: 1;}
-  to {top: 0; opacity: 0;}
+  from {
+    top: 30px;
+    opacity: 1;
+  }
+  to {
+    top: 0;
+    opacity: 0;
+  }
 }
 
 @keyframes fadeout {
-  from {top: 30px; opacity: 1;}
-  to {top: 0; opacity: 0;}
+  from {
+    top: 30px;
+    opacity: 1;
+  }
+  to {
+    top: 0;
+    opacity: 0;
+  }
 }

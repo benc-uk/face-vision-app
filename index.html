@@ -1,39 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="shortcut icon" href="img/icon.png" type="image/png" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Computer Vision & Face Recognition</title>
 
-<head>
-  <meta charset="UTF-8">
-  <link rel="shortcut icon" href="img/icon.png" type="image/png">
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Computer Vision & Face Recognition</title>
-  
-  <!-- Use fontawesome, because it's awesome -->
-  <script src="https://kit.fontawesome.com/7b5f2a40f9.js" crossorigin="anonymous"></script>
-  
-  <!-- App files -->
-  <script type="module" src="./js/app.mjs"></script>
-  <link rel="stylesheet" href="css/main.css">
-  <link rel="stylesheet" href="css/toast.css">
+    <!-- Use fontawesome, because it's awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/all.min.css"
+      integrity="sha512-q3eWabyZPc1XTCmF+8/LuE1ozpg5xxn7iO89yfSOd5/oKvyqLngoNGsx8jq92Y8eXJ/IRxQbEC+FGSYxtk2oiw=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer" />
 
-  <!-- face-api / Tensorflow which might not be used -->
-  <script src="./js/lib/face-api.js"></script>
-</head>
+    <!-- App files -->
+    <script type="module" src="./js/app.mjs"></script>
+    <link rel="stylesheet" href="css/main.css" />
+    <link rel="stylesheet" href="css/toast.css" />
 
-<body>
-  <button id="restart"><i class="fas fa-redo fa-fw"></i></button>      
-  <button id="camselect"><i class="fas fa-camera fa-fw"></i></button>
-  <button id="modeselect"><i class="fas fa-grin-alt fa-fw"></i></button>
-  <button id="fullscreen"><i class="fas fa-expand fa-fw"></i></button>
+    <!-- face-api / Tensorflow library -->
+    <script src="./js/lib/face-api.js"></script>
+  </head>
 
-  <div id="toast"></div>
+  <body>
+    <button id="restart"><i class="fas fa-redo fa-fw"></i></button>
+    <button id="camselect"><i class="fas fa-camera fa-fw"></i></button>
+    <button id="modeselect"><i class="fas fa-grin-alt fa-fw"></i></button>
+    <button id="fullscreen"><i class="fas fa-expand fa-fw"></i></button>
+    <button id="emoji"><i class="far fa-check-circle fa-fw"></i></button>
 
-  <div class="center" id="main">
-    <div id="dialog" onclick="document.querySelector('#dialog').style.display = `none`"></div>
+    <div id="toast"></div>
 
-    <video autoplay class=""></video>
-    <canvas id="overlay"></canvas>
-    <canvas id="offscreen"></canvas>
-  </div>
-</body>
+    <div class="center" id="main">
+      <div id="dialog" onclick="document.querySelector('#dialog').style.display = `none`"></div>
+
+      <video autoplay class=""></video>
+      <canvas id="overlay"></canvas>
+      <canvas id="offscreen"></canvas>
+    </div>
+  </body>
 </html>

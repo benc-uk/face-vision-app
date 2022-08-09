@@ -1,16 +1,17 @@
-body, html { 
-  background-color: rgb(34, 31, 31); 
-  height: 100%; 
-  padding: 0; 
-  margin: 0; 
+body,
+html {
+  background-color: rgb(34, 31, 31);
+  height: 100%;
+  padding: 0;
+  margin: 0;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   color: #bbb;
 }
 
 button {
   padding: 5px;
-  box-shadow: 0px 5px 10px 5px rgba(0,0,0,0.6);
-  font-size: 3rem; 
+  box-shadow: 0px 5px 10px 5px rgba(0, 0, 0, 0.6);
+  font-size: 3rem;
   background-color: rgb(37, 37, 37);
   border: 3px solid rgb(27, 27, 27);
   cursor: pointer;
@@ -21,27 +22,27 @@ button {
   position: fixed;
 }
 
-/* Mobile tweaks */ 
-@media (max-width:800px) {
+/* Mobile tweaks */
+@media (max-width: 800px) {
   button {
-    font-size: 1.7rem; 
+    font-size: 1.7rem;
   }
   #modeselect {
     left: 5rem !important;
   }
   #fullscreen {
     left: 9rem !important;
-  }  
+  }
   #accept {
     font-size: 2.6rem;
   }
   #cancel {
     font-size: 2.6rem;
-  }    
+  }
 }
 
 table {
-  margin-left: auto; 
+  margin-left: auto;
   margin-right: auto;
   text-align: left;
   border-collapse: collapse;
@@ -55,14 +56,14 @@ table td {
   background-color: rgba(0, 0, 0, 0.3);
 }
 
-video { 
+video {
   width: 100%;
-  height: 100%; 
+  height: 100%;
   margin: 0;
   padding: 0;
 }
 
-#offscreen { 
+#offscreen {
   display: none;
   margin: 0;
   padding: 0;
@@ -75,7 +76,7 @@ video {
   left: 0;
   position: absolute;
   z-index: 20;
-  background-color: rgba(0,0,0,0.0);
+  background-color: rgba(0, 0, 0, 0);
 }
 
 #main {
@@ -116,6 +117,11 @@ video {
   left: 1rem;
 }
 
+#emoji {
+  bottom: 1rem;
+  left: 19rem;
+}
+
 #accept {
   bottom: 3rem;
   left: 50%;
@@ -144,13 +150,13 @@ video {
   padding: 10px;
   text-align: center;
   margin: 0 auto;
-  z-index: 200; 
+  z-index: 200;
   background-color: rgb(37, 37, 37);
-  border: 3px solid rgb(27, 27, 27); 
+  border: 3px solid rgb(27, 27, 27);
   cursor: pointer;
 }
-/* Mobile tweaks */ 
-@media (max-width:800px) {
+/* Mobile tweaks */
+@media (max-width: 800px) {
   #dialog {
     max-width: 100%;
     width: 90%;
@@ -170,13 +176,13 @@ video {
   display: none;
   position: absolute;
   top: 5rem;
-  left: 50%; 
+  left: 50%;
   transform: translate(-50%, 0);
   width: 100px;
 }
 
-.center { 
-  text-align: center; 
+.center {
+  text-align: center;
 }
 
 .hidden {

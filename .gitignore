@@ -1,3 +1,5 @@
 deploy.sh
 config.mjs
 config.local.mjs
+bin/
+tools/

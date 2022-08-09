@@ -14,6 +14,7 @@ Edit `config.mjs` and change the following:
 - `FACE_API_KEY` and `FACE_API_ENDPOINT` to your values for the face API
 - `VISION_API_KEY` and `VISION_API_ENDPOINT` to your values for the computer vision API
 
+> NOTE. Do not include the protocol scheme e.g. https:// in the endpoint
 
 # Deployment
 The app is completely static so can be deployed almost anywhere including Azure Storage accounts, App Service, Netlify, GitHub Pages etc. Deploy the index.html file as well as `css`, `js` and `img` directories 

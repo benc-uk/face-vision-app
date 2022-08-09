@@ -1,15 +1,17 @@
 import { randomColor } from './utils.mjs'
-import { showDetail, overlay, canvasScale, showError, showEmoji } from './app.mjs'
+import { showDetail, overlay, canvasScale, showError } from './app.mjs'
 import { config } from '../config.mjs'
-
-const API_OPTIONS = 'returnFaceAttributes=age,gender,smile,facialHair,glasses,emotion,hair,makeup'
+let canvasCtx
 
 //
 // Analyze an image for faces with cognitive service API
 // Image is passed as a blob from app.js
 //
-export function analyzePhotoFace(blob) {
-  const apiUrl = `https://${config.FACE_API_ENDPOINT}/face/v1.0/detect?${API_OPTIONS}`
+
+const API_OPTIONS = 'returnFaceAttributes=age,gender,smile,facialHair,glasses,emotion,hair,makeup'
+
+export function analyzePhotoFaceDetect(blob) {
+  var apiUrl = `https://${config.FACE_API_ENDPOINT}/face/v1.0/detect?${API_OPTIONS}`
 
   fetch(apiUrl, {
     method: 'POST',
@@ -26,12 +28,13 @@ export function analyzePhotoFace(blob) {
       return response.json()
     })
     .then((data) => {
-      // Fetch the canvas and clear it
-      let canvasCtx = overlay.getContext('2d')
+      // Clear the canvas!
+      canvasCtx = overlay.getContext('2d')
       canvasCtx.clearRect(0, 0, overlay.width, overlay.height)
+      //canvasCtx.drawImage(video, 0, 0, overlay.width, overlay.height);
 
       for (let face of data) {
-        processFaceResult(face, canvasCtx)
+        processFaceResult(face)
       }
     })
     .catch((err) => {
@@ -42,7 +45,7 @@ export function analyzePhotoFace(blob) {
 //
 // Display face information with table of details and box around the face
 //
-function processFaceResult(face, canvasCtx) {
+function processFaceResult(face) {
   let color = randomColor({ luminosity: 'light' })
   let faceAttr = face.faceAttributes
 
@@ -138,20 +141,17 @@ function processFaceResult(face, canvasCtx) {
     }
   }
 
-  if (showEmoji) {
-    canvasCtx.shadowOffsetX = 0
-    canvasCtx.shadowOffsetY = 0
+  canvasCtx.shadowOffsetX = 0
+  canvasCtx.shadowOffsetY = 0
+  var emojiFace = new Image()
+  emojiFace.onload = () =>
+    canvasCtx.drawImage(
+      emojiFace,
+      face.faceRectangle.left,
+      face.faceRectangle.top,
+      face.faceRectangle.width,
+      face.faceRectangle.height
+    )
 
-    const emojiFace = new Image()
-    emojiFace.onload = () =>
-      canvasCtx.drawImage(
-        emojiFace,
-        face.faceRectangle.left,
-        face.faceRectangle.top,
-        face.faceRectangle.width,
-        face.faceRectangle.height
-      )
-
-    emojiFace.src = `img/emo/${topEmoName}.svg`
-  }
+  emojiFace.src = `img/emo/${topEmoName}.svg`
 }
