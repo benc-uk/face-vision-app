@@ -1,4 +1,4 @@
-import { randomColor } from './utils.mjs'
+import { randomColor, redText } from './utils.mjs'
 import { showDetail, overlay, canvasScale, showError, showEmoji } from './app.mjs'
 import { config } from './app.mjs'
 
@@ -30,6 +30,12 @@ export async function analyzePhotoFace(blob) {
       // Fetch the canvas and clear it
       let canvasCtx = overlay.getContext('2d')
       canvasCtx.clearRect(0, 0, overlay.width, overlay.height)
+
+      // Show a message if no faces are found
+      if (data.length <= 0) {
+        redText('No faces found!', canvasCtx, canvasScale, overlay)
+        return
+      }
 
       // Process each face
       for (let face of data) {
@@ -81,6 +87,7 @@ function processFaceResult(face, canvasCtx) {
   canvasCtx.font = `${20 * canvasScale}px Arial`
   let detailsLine = 2
   canvasCtx.textAlign = 'end'
+
   if (hairColor !== 'None') {
     canvasCtx.fillText(
       `${hairColor} hair`,
@@ -89,6 +96,7 @@ function processFaceResult(face, canvasCtx) {
     )
     detailsLine += 3
   }
+
   if (face.faceAttributes.hair.bald > 0) {
     canvasCtx.fillText(
       `${parseFloat(face.faceAttributes.hair.bald * 100).toFixed(1)}% bald`,
@@ -97,6 +105,7 @@ function processFaceResult(face, canvasCtx) {
     )
     detailsLine += 3
   }
+
   if (face.faceAttributes.hair.beard > 0) {
     canvasCtx.fillText(
       `${parseFloat(face.faceAttributes.facialHair.beard * 100).toFixed(1)}% beard`,
@@ -105,10 +114,12 @@ function processFaceResult(face, canvasCtx) {
     )
     detailsLine += 3
   }
+
   if (faceAttr.makeup.eyeMakeup) {
     canvasCtx.fillText(`eye makeup`, face.faceRectangle.left - offset, face.faceRectangle.top + offset * detailsLine)
     detailsLine += 3
   }
+
   if (faceAttr.makeup.lipMakeup) {
     canvasCtx.fillText(`lip makeup`, face.faceRectangle.left - offset, face.faceRectangle.top + offset * detailsLine)
   }

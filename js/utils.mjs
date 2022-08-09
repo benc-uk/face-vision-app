@@ -85,3 +85,12 @@ export function showToast(msg) {
     snackbar.className = snackbar.className.replace('show', '')
   }, 3000)
 }
+
+export function redText(msg, canvasCtx, canvasScale, overlay) {
+  canvasCtx.shadowColor = '#000000'
+  canvasCtx.shadowOffsetX = 3 * canvasScale
+  canvasCtx.shadowOffsetY = 3 * canvasScale
+  canvasCtx.fillStyle = '#ff0000'
+  canvasCtx.font = `${50 * canvasScale}px Arial`
+  canvasCtx.fillText(msg, overlay.width / 2 - canvasCtx.measureText(msg).width / 2, overlay.height / 2)
+}

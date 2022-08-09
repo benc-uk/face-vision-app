@@ -42,7 +42,7 @@ There are two other settings in config.json which can be set:
   // - Set to zero to disable realtime capture, users will need to tap to trigger
   // - Low values could result in very high API usage and potentially costs
   // - Values 500 and below will only work on a fast network and will give you a HUGE bill  
-  "AZURE_REFRESH_RATE": 5000,
+  "AZURE_REFRESH_RATE": 4000,
 
   // How often the capture/analysis is done with the local Tensforflow.js models
   // This can be much higher, as no remote API is called and no costs are involved

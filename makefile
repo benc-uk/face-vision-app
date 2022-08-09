@@ -1,5 +1,5 @@
 # Common variables
-VERSION := 0.7.0
+VERSION := 0.7.2
 
 # Things you don't want to change
 REPO_DIR := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))

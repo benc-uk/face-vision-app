@@ -21,7 +21,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  deploy:
+  deploy-site:
     environment:
       name: Live Demo
       url: ${{ steps.deployment.outputs.page_url }}

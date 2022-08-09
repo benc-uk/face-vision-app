@@ -1,4 +1,4 @@
-import { randomColor, showToast } from './utils.mjs'
+import { randomColor, redText, showToast } from './utils.mjs'
 import { overlay, canvasScale, showError, video, showEmoji } from './app.mjs'
 let firstDetection = true
 
@@ -24,6 +24,12 @@ export async function analyzePhotoFaceTensorflow() {
     // Fetch the canvas and clear it
     let canvasCtx = overlay.getContext('2d')
     canvasCtx.clearRect(0, 0, overlay.width, overlay.height)
+
+    if (detections.length <= 0) {
+      // Show a message if no faces are found
+      redText('No faces found!', canvasCtx, canvasScale, overlay)
+      return
+    }
 
     for (let face of detections) {
       //console.log(face.expressions)

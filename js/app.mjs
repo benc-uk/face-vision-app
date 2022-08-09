@@ -1,9 +1,9 @@
-import { analyzePhotoFace } from './results-face.mjs'
 import { analyzePhotoFaceTensorflow } from './results-face-tf.mjs'
-import { analyzePhotoVision } from './results-vision.mjs'
+import { analyzePhotoFace } from './results-face-az.mjs'
+import { analyzePhotoVision } from './results-vision-az.mjs'
 import { setCookie, getCookie, toggleFullScreen, videoDimensions, showToast } from './utils.mjs'
 
-const VERSION = '0.7.1'
+const VERSION = '0.7.2'
 export const dialog = document.querySelector('#dialog')
 export const offscreen = document.querySelector('#offscreen')
 export const overlay = document.querySelector('#overlay')
@@ -41,7 +41,7 @@ window.addEventListener('load', async (evt) => {
   if (!resp.ok) {
     // Fall back to default config
     config = {
-      AZURE_REFRESH_RATE: 3000,
+      AZURE_REFRESH_RATE: 4000,
       TF_REFRESH_RATE: 500,
     }
   } else {
@@ -290,7 +290,9 @@ overlay.addEventListener('click', captureImage)
 // Capture from video, draw into canvas and send to API
 //
 function captureImage() {
-  if (!active) return
+  if (!active) {
+    return
+  }
 
   // Handles resizing and first time loaded
   // Sizes the video, offscreen canvas and overlay canvas
