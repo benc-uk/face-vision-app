@@ -22,40 +22,6 @@ button {
   position: fixed;
 }
 
-/* Mobile tweaks */
-@media (max-width: 800px) {
-  button {
-    font-size: 1.7rem;
-  }
-  #modeselect {
-    left: 5rem !important;
-  }
-  #fullscreen {
-    left: 9rem !important;
-  }
-  #accept {
-    font-size: 2.6rem;
-  }
-  #cancel {
-    font-size: 2.6rem;
-  }
-}
-
-table {
-  margin-left: auto;
-  margin-right: auto;
-  text-align: left;
-  border-collapse: collapse;
-  padding-right: 5px;
-  display: inline;
-}
-
-table td {
-  padding: 0.5rem;
-  border: 3px solid rgba(0, 0, 0, 0.4);
-  background-color: rgba(0, 0, 0, 0.3);
-}
-
 video {
   width: 100%;
   height: 100%;
@@ -80,7 +46,6 @@ video {
 }
 
 #main {
-  /* background-color: #3d0055;  */
   margin: 0px;
   padding: 0px;
   margin-left: auto;
@@ -90,50 +55,24 @@ video {
   overflow: hidden;
 }
 
-#output {
-  color: rgb(218, 218, 218);
-  display: none;
-  margin: 10px;
-  padding: 10px;
-}
-
 #camselect {
   bottom: 1rem;
-  left: 1rem;
+  left: 10%;
 }
 
 #modeselect {
   bottom: 1rem;
-  left: 7rem;
+  left: 30%;
 }
 
 #fullscreen {
   bottom: 1rem;
-  left: 13rem;
-}
-
-#restart {
-  top: 1rem;
-  left: 1rem;
+  left: 50%;
 }
 
 #emoji {
   bottom: 1rem;
-  left: 19rem;
-}
-
-#accept {
-  bottom: 3rem;
-  left: 50%;
-  color: #13a51a;
-  transform: translate(-150%, 0);
-}
-
-#cancel {
-  bottom: 3rem;
-  left: 50%;
-  color: #ca281d;
-  transform: translate(150%, 0);
+  left: 70%;
 }
 
 #dialog {
@@ -155,6 +94,7 @@ video {
   border: 3px solid rgb(27, 27, 27);
   cursor: pointer;
 }
+
 /* Mobile tweaks */
 @media (max-width: 800px) {
   #dialog {
@@ -170,15 +110,6 @@ video {
 #dialog a {
   font-size: 80%;
   color: aqua;
-}
-
-#spinner {
-  display: none;
-  position: absolute;
-  top: 5rem;
-  left: 50%;
-  transform: translate(-50%, 0);
-  width: 100px;
 }
 
 .center {

@@ -11,6 +11,10 @@ The app has three modes:
 
 The two Azure modes are optional and are disabled by default
 
+## Live demo
+
+[Live demo hosted on GitHub pages here](https://code.benco.io/face-vision-app/)
+
 ## Azure Cognitive Services Mode
 
 - Create a **Face API service account/instance** in Azure. Make a note of the endpoint and key. See also https://docs.microsoft.com/en-us/azure/cognitive-services/face/
