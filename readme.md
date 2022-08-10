@@ -11,7 +11,9 @@ The app has three modes:
 
 The two Azure modes are optional and are disabled by default
 
-![screen shot of the app](https://user-images.githubusercontent.com/14982936/183762018-0f76de0d-1517-4b10-934a-df20dcec507a.png)
+<img src="https://user-images.githubusercontent.com/14982936/183762018-0f76de0d-1517-4b10-934a-df20dcec507a.png" width="500px">
+<img src="https://user-images.githubusercontent.com/14982936/183889899-43b5cb40-ebca-408c-bac4-3a9c24c5dd86.png" width="500px">
+<img src="https://user-images.githubusercontent.com/14982936/183889457-b213bfb9-13eb-4929-9816-af71067a4a4d.png" width="500px">
 
 ## Live Demo
 
