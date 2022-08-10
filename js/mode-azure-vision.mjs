@@ -9,7 +9,7 @@ const API_OPTIONS = 'visualFeatures=Objects,Description,Faces,Tags,Brands,Catego
 // Analyze an image for content with cognitive service API
 // Image is passed as a blob from app.js
 //
-export async function analyzePhotoVision(blob) {
+export async function analyzeVisionAzure(blob) {
   const apiUrl = `${config.VISION_API_ENDPOINT}/vision/v3.2/analyze?${API_OPTIONS}`
 
   try {

@@ -1,15 +1,15 @@
 import { randomColor, redText, showToast } from './utils.mjs'
-import { overlay, canvasScale, showError, video, showEmoji } from './app.mjs'
+import { canvasScale, showError, overlay, video, showEmoji } from './app.mjs'
 let firstDetection = true
 
 //
 // Analyze an image for faces with face-api.js
 // Image is fetched directly from the video element
 //
-export async function analyzePhotoFaceTensorflow() {
+export async function analyzeFaceTensorflow() {
   try {
     if (firstDetection) {
-      showToast(`Please wait, first detection can take several seconds`)
+      showToast(`First detection can take several seconds`)
     }
 
     let detections = await faceapi.detectAllFaces(video).withFaceExpressions().withAgeAndGender()
@@ -32,7 +32,6 @@ export async function analyzePhotoFaceTensorflow() {
     }
 
     for (let face of detections) {
-      //console.log(face.expressions)
       processFaceResult(face, canvasCtx)
     }
   } catch (err) {

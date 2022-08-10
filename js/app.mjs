@@ -1,6 +1,6 @@
-import { analyzePhotoFaceTensorflow } from './results-face-tf.mjs'
-import { analyzePhotoFace } from './results-face-az.mjs'
-import { analyzePhotoVision } from './results-vision-az.mjs'
+import { analyzeFaceTensorflow } from './mode-local-face.mjs'
+import { analyzeFaceAzure } from './mode-azure-face.mjs'
+import { analyzeVisionAzure } from './mode-azure-vision.mjs'
 import { setCookie, getCookie, toggleFullScreen, videoDimensions, showToast } from './utils.mjs'
 
 const VERSION = '0.7.2'
@@ -316,15 +316,11 @@ function captureImage() {
   offscreen.getContext('2d').drawImage(video, 0, 0, vidDim.width, vidDim.height)
 
   // For Azure APIs convert canvas to a blob and process with the selected API
-  if (apiMode == 'vision') offscreen.toBlob(analyzePhotoVision, 'image/jpeg')
-  if (apiMode == 'face-az') {
-    offscreen.toBlob((blob) => {
-      analyzePhotoFace(blob)
-    }, 'image/jpeg')
-  }
+  if (apiMode == 'vision') offscreen.toBlob(analyzeVisionAzure, 'image/jpeg')
+  if (apiMode == 'face-az') offscreen.toBlob(analyzeFaceAzure, 'image/jpeg')
 
   // For local Tensorflow model
-  if (apiMode == 'face-tf') analyzePhotoFaceTensorflow(showEmoji)
+  if (apiMode == 'face-tf') analyzeFaceTensorflow()
 }
 
 //
