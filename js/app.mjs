@@ -3,7 +3,7 @@ import { analyzeFaceAzure } from './mode-azure-face.mjs'
 import { analyzeVisionAzure } from './mode-azure-vision.mjs'
 import { setCookie, getCookie, toggleFullScreen, videoDimensions, showToast } from './utils.mjs'
 
-const VERSION = '0.7.2'
+const VERSION = '0.7.3'
 export const dialog = document.querySelector('#dialog')
 export const offscreen = document.querySelector('#offscreen')
 export const overlay = document.querySelector('#overlay')
@@ -16,7 +16,6 @@ const butFullscreen = document.querySelector('#fullscreen')
 const butEmoji = document.querySelector('#emoji')
 
 export let canvasScale // Used to scale any drawing done
-export let showDetail = true // Show more detail and face emojis
 let selectedDevice = 0 // Currently selected camera id
 let deviceIds = [] // List of all cameras (device ids)
 let apiMode // Either 'face-tf', 'face-az' or 'vision'

@@ -1,8 +1,8 @@
 import { randomColor, redText } from './utils.mjs'
-import { showDetail, overlay, canvasScale, showError, showEmoji } from './app.mjs'
+import { overlay, canvasScale, showError } from './app.mjs'
 import { config } from './app.mjs'
 
-const API_OPTIONS = 'returnFaceAttributes=age,gender,smile,facialHair,glasses,emotion,hair,makeup'
+const API_OPTIONS = 'returnFaceAttributes=' //age,gender,smile,facialHair,glasses,emotion,hair,makeup'
 
 //
 // Analyze an image for faces with cognitive service API
@@ -54,15 +54,6 @@ function processFaceResult(face, canvasCtx) {
   let color = randomColor({ luminosity: 'light' })
   let faceAttr = face.faceAttributes
 
-  let hairColor = 'None'
-  let hairColorConfidence = 0
-  for (let hair of face.faceAttributes.hair.hairColor) {
-    if (hair.confidence > hairColorConfidence) {
-      hairColorConfidence = hair.confidence
-      hairColor = hair.color
-    }
-  }
-
   // Face boxes
   canvasCtx.textAlign = 'start'
   canvasCtx.textBaseline = 'bottom'
@@ -79,10 +70,15 @@ function processFaceResult(face, canvasCtx) {
   // Box title
   canvasCtx.font = `${30 * canvasScale}px Arial`
   let offset = 10 * canvasScale
-  canvasCtx.fillText(`${faceAttr.gender} (${faceAttr.age})`, face.faceRectangle.left, face.faceRectangle.top - offset)
+  const title = `A face` //`${faceAttr.gender} (${faceAttr.age})`
+  canvasCtx.fillText(title, face.faceRectangle.left, face.faceRectangle.top - offset)
 
-  if (!showDetail) return
+  canvasCtx.fillStyle = '#ff0000'
+  canvasCtx.fillText('The Azure Face API now returns only very basic details without age, emotion or gender', 10, 40)
 
+  // AZURE HAS REMOVED NEARLY ALL OF THE ATTRIBUTES FROM THE FACE API!
+
+  /*
   // Face details on left
   canvasCtx.font = `${20 * canvasScale}px Arial`
   let detailsLine = 2
@@ -167,4 +163,5 @@ function processFaceResult(face, canvasCtx) {
 
     emojiFace.src = `img/emo/${topEmoName}.svg`
   }
+  */
 }

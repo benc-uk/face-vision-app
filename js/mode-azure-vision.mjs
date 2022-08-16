@@ -1,5 +1,5 @@
 import { randomColor } from './utils.mjs'
-import { showDetail, overlay, canvasScale, showError } from './app.mjs'
+import { overlay, canvasScale, showError } from './app.mjs'
 import { config } from './app.mjs'
 let canvasCtx
 
@@ -68,9 +68,6 @@ export async function analyzeVisionAzure(blob) {
         visionItemBox(r.x, r.y, r.w, r.h, `${brand.name}`)
       }
     }
-
-    if (!showDetail) return
-
     // Get top 5 tags and confidence score
     if (data.tags) {
       let t = 0
